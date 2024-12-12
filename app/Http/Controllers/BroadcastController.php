@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Penghuni;
+use App\Models\tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +17,7 @@ class BroadcastController extends Controller
     public function index()
     {
         // Retrieve all tenants
-        $tenants = Penghuni::all();
+        $tenants = tenant::all();
 
         // Log the retrieved tenants for debugging
         Log::info('Retrieved tenants for broadcasting.', [
@@ -38,7 +38,7 @@ class BroadcastController extends Controller
         // Validate input data
         $validatedData = $request->validate([
             'tenant_ids' => 'required|array|min:1', // Ensure at least one tenant is selected
-            'tenant_ids.*' => 'exists:penghunis,id', // ini 'tenant_ids.*' => 'exists:penghunis,id' artinya tenant_ids data ada atau tidak di tabel penghunis data id
+            'tenant_ids.*' => 'exists:tenants,id', // ini 'tenant_ids.*' => 'exists:tenants,id' artinya tenant_ids data ada atau tidak di tabel tenants data id
             'message' => 'required|string',
         ]);
 
@@ -48,10 +48,10 @@ class BroadcastController extends Controller
         // Collect recipients
         $recipients = [];
         foreach ($request->tenant_ids as $tenantId) {
-            $tenant = Penghuni::find($tenantId);
+            $tenant = tenant::find($tenantId);
 
             if ($tenant) {
-                $tenantPhone = preg_replace('/\D/', '', $tenant->telphon);
+                $tenantPhone = preg_replace('/\D/', '', $tenant->phone);
 
                 // Ensure the phone number starts with the correct country code
                 if (substr($tenantPhone, 0, 2) !== '62') {

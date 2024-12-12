@@ -14,6 +14,7 @@ class Tenant extends Model
      *
      * @var array
      */
+    protected $table = 'tenants'; // Specify table name if it's not plural of the model name. ini dipake untuk botbroadcast
     protected $fillable = [
         'name',
         'phone',

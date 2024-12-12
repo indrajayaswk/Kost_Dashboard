@@ -12,7 +12,7 @@
                     <div class="form-check">
                         <input type="checkbox" name="tenant_ids[]" value="{{ $tenant->id }}" class="form-check-input" id="tenant{{ $tenant->id }}">
                         <label class="form-check-label" for="tenant{{ $tenant->id }}">
-                            {{ $tenant->nama }} ({{ $tenant->telphon }})
+                            {{ $tenant->name }} ({{ $tenant->phone }})
                         </label>
                     </div>
                 @endforeach
