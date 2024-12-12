@@ -30,6 +30,9 @@
 
 @include('admin.kamar.kamar-add')
 @include('admin.kamar.kamar-update')
+{{-- ---------------------------------------------------------- --}}
+@include('admin2.tenant.tenant-add')
+
 {{-- ------------------------ End of CRUD includes ------------------------ --}}
 
 <body class="font-sans antialiased ">

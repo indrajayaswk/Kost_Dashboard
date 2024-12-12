@@ -8,8 +8,11 @@ use App\Http\Controllers\MeteranController;
 use App\Http\Controllers\PenghuniController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatistikController;
+use App\Models\Meteran;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Route;
-
+// ---------------------------------------------------------------
+use App\Http\Controllers\TenantController;
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -17,13 +20,13 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard route
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-
     // Penghuni (Tenant) routes
     Route::resource('penghuni', PenghuniController::class);
 
     //Kamar rouites
     Route::resource('kamar', KamarController::class);
-
+    //Meteran routes
+    Route::resource('meteran', MeteranController::class);
 
 
     // Other routes
@@ -34,7 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Other management routes
     // Route::get('/kamar', [KamarController::class, 'index'])->name('kamar.index');
     Route::get('/statistik', [StatistikController::class, 'index'])->name('statistik.index');
-    Route::get('/meteran', [MeteranController::class, 'index'])->name('meteran.index');
+    // Route::get('/meteran', [MeteranController::class, 'index'])->name('meteran.index');
     Route::get('/komplain', [KomplainController::class, 'index'])->name('komplain.index');
     // Route::get('/broadcast', [BroadcastController::class, 'index'])->name('broadcast.index');
 
@@ -42,7 +45,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //INI ROUTE RESOURCE broadcast cuman buat 2 index dan store aja karena broadcast perlu 2 itu aja untuk sekarang
     Route::resource('broadcast', BroadcastController::class)->only(['index', 'store']);
     Route::post('/broadcast/send', [BroadcastController::class, 'send'])->name('broadcast.send');
-
+// ---------------------------------------------------------ADMIN2-------------------------------------------
+    Route::get('/tenant',[TenantController::class,'index'])->name('tenant.index');
+    Route::resource('tenant',TenantController::class);
     
 });
 

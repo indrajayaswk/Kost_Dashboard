@@ -58,10 +58,10 @@
                         </tr>
                     </thead>
                     {{-- <tbody>
-                        @foreach ($kamars as $index => $room)
+                        @foreach ($meteran as $index => $room)
     <tr class="border-b dark:border-gray-700">
         <td class="px-4 py-3">
-            {{ $kamars->firstItem() + $index }}
+            {{ $meteran->firstItem() + $index }}
         </td>
         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
             {{ $room->nomer_kamar }}
@@ -118,28 +118,28 @@
                     </tbody>
                 </table> --}}
         
-                <!-- Pagination -->
-                <div class="flex justify-between items-center p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700">
+  <!-- Pagination -->
+                {{-- <div class="flex justify-between items-center p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700">
                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                        Showing <span class="font-semibold text-gray-900 dark:text-white">{{ $kamars->firstItem() }}-{{ $kamars->lastItem() }}</span>
-                        of <span class="font-semibold text-gray-900 dark:text-white">{{ $kamars->total() }}</span>
+                        Showing <span class="font-semibold text-gray-900 dark:text-white">{{ $meteran->firstItem() }}-{{ $meteran->lastItem() }}</span>
+                        of <span class="font-semibold text-gray-900 dark:text-white">{{ $meteran->total() }}</span>
                     </span>
                     <div class="flex items-center space-x-2">
                         <!-- Previous Page Link -->
-                        <a href="{{ $kamars->previousPageUrl() }}" 
-                            class="px-3 py-2 text-sm font-medium {{ $kamars->onFirstPage() ? 'text-gray-400 bg-gray-100 cursor-not-allowed' : 'text-gray-500 bg-gray-100 hover:bg-gray-200' }} rounded dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        <a href="{{ $meteran->previousPageUrl() }}" 
+                            class="px-3 py-2 text-sm font-medium {{ $meteran->onFirstPage() ? 'text-gray-400 bg-gray-100 cursor-not-allowed' : 'text-gray-500 bg-gray-100 hover:bg-gray-200' }} rounded dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
                             Previous
                         </a>
                         <!-- Page Numbers -->
-                        @foreach ($kamars->getUrlRange(1, $kamars->lastPage()) as $page => $url)
+                        @foreach ($meteran->getUrlRange(1, $meteran->lastPage()) as $page => $url)
                         <a href="{{ $url }}" 
-                            class="px-3 py-2 text-sm font-medium {{ $page == $kamars->currentPage() ? 'text-white bg-primary-600' : 'text-gray-500 bg-gray-100 hover:bg-gray-200' }} rounded dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                            class="px-3 py-2 text-sm font-medium {{ $page == $meteran->currentPage() ? 'text-white bg-primary-600' : 'text-gray-500 bg-gray-100 hover:bg-gray-200' }} rounded dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
                             {{ $page }}
                         </a>
                         @endforeach
                         <!-- Next Page Link -->
-                        <a href="{{ $kamars->nextPageUrl() }}" 
-                            class="px-3 py-2 text-sm font-medium {{ !$kamars->hasMorePages() ? 'text-gray-400 bg-gray-100 cursor-not-allowed' : 'text-gray-500 bg-gray-100 hover:bg-gray-200' }} rounded dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        <a href="{{ $meteran->nextPageUrl() }}" 
+                            class="px-3 py-2 text-sm font-medium {{ !$meteran->hasMorePages() ? 'text-gray-400 bg-gray-100 cursor-not-allowed' : 'text-gray-500 bg-gray-100 hover:bg-gray-200' }} rounded dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
                             Next
                         </a>
                     </div>
@@ -147,10 +147,10 @@
             </div>
         </div>
   </div>
-</div>
+</div> --}}
 
 {{--- model update/edit kamar---------------------------------------------------------------------------------------------------}}
-    @foreach ($kamars as $kamar)
+    {{-- @foreach ($meteran as $kamar)
     <div id="updatekamar-{{ $kamar->id }}" tabindex="-1" aria-hidden="true" 
         class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-lg">
         <div class="relative w-full max-w-lg max-h-full bg-white rounded-lg shadow dark:bg-gray-700">
@@ -225,7 +225,7 @@
             </form>            
         </div>
     </div>
-    @endforeach
+    @endforeach --}}
 {{-- model custom filter---------------------------------------------------------------------------------- --}}
       </div>
   </div>
@@ -275,7 +275,7 @@
   </div> --}}
 
 {{-- model delete kamar --------------------------------------------------------------------------}}
-  @foreach ($kamars as $kamar)
+  {{-- @foreach ($meteran as $kamar)
   <div id="deleteModalkamar-{{ $kamar->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50">
       <div class="relative p-4 w-full max-w-md max-h-full">
           <!-- Modal content -->
@@ -306,7 +306,7 @@
           </div>
       </div>
   </div>
-  @endforeach
+  @endforeach --}}
   
   
 
