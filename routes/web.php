@@ -46,14 +46,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //INI ROUTE RESOURCE broadcast cuman buat 2 index dan store aja karena broadcast perlu 2 itu aja untuk sekarang
     Route::resource('broadcast', BroadcastController::class)->only(['index', 'store']);
     Route::post('/broadcast/send', [BroadcastController::class, 'send'])->name('broadcast.send');
-    //------------------------------------------
+    //----------------middleware untuk cek dan akses foto ktp di private--------------------------
     Route::middleware(['auth'])->get('/ktp/images/{filename}', [KTPImageController::class, 'show'])->name('ktp.image.show');
 
 
 
 
     // ---------------------------------------------------------ADMIN2-------------------------------------------
-    Route::get('/tenant',[TenantController::class,'index'])->name('tenant.index');
     Route::resource('tenant',TenantController::class);
     
 });
