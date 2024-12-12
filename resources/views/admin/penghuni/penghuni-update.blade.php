@@ -74,15 +74,57 @@
 <script>
 
     //// HATI HATI DENGAN TYPOS! SEPASI BISA NGERUSAK INI!!!!!!
+    // document.addEventListener('DOMContentLoaded', () => {
+    // const editButtons = document.querySelectorAll('.open-edit-modal');
+    // const modal = document.getElementById('updatepenghuni');
+    // const form = document.getElementById('editTenantForm');
+    // const fotoInput = form.querySelector('#ktp');
+    // const fotoPreview = document.getElementById('foto_ktp_preview');
+
+    // editButtons.forEach(button => {
+    //     button.addEventListener('click', () => {
+    //         const id = button.getAttribute('data-id');
+    //         const nama = button.getAttribute('data-nama');
+    //         const telphon = button.getAttribute('data-telphon');
+    //         const fotoKtp = button.getAttribute('data-foto-ktp');
+    //         const dp = button.getAttribute('data-dp');
+    //         const tanggalMasuk = button.getAttribute('data-tanggal-masuk');
+    //         const tanggalKeluar = button.getAttribute('data-tanggal-keluar');
+    //         const note = button.getAttribute('data-note');
+
+    //         form.action = `/penghuni/${id}`;
+    //         form.querySelector('#tenantId').value = id;
+    //         form.querySelector('#nama').value = nama;
+    //         form.querySelector('#telphon').value = telphon;
+    //         form.querySelector('#dp').value = dp;
+    //         form.querySelector('#tanggal_masuk').value = tanggalMasuk;
+    //         form.querySelector('#tanggal_keluar').value = tanggalKeluar;
+    //         form.querySelector('#note').value = note;
+
+    //         if (fotoKtp) {
+    //             fotoPreview.src = `/public/ktp_images/${fotoKtp}`; // Use Laravel's /storage/ path
+    //             fotoPreview.style.display = 'block';
+    //         } else {
+    //             fotoPreview.style.display = 'none';
+    //         }
+
+
+    //         modal.classList.remove('hidden');
+    //     });
+    // });
+    ///---------------------versi2, code ini engga trigger open-edit-modal lalu show admin1 tenant form editnya---------------------------------
 document.addEventListener('DOMContentLoaded', () => {
     const editButtons = document.querySelectorAll('.open-edit-modal');
-    const modal = document.getElementById('updatepenghuni');
-    const form = document.getElementById('editTenantForm');
-    const fotoInput = form.querySelector('#ktp');
-    const fotoPreview = document.getElementById('foto_ktp_preview');
 
     editButtons.forEach(button => {
         button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-target'); // Dynamically get target modal
+            const modal = document.getElementById(modalId); // Target the correct modal
+            const form = modal.querySelector('form');
+            const fotoInput = modal.querySelector('[id^="ktp-"]');
+            const fotoPreview = modal.querySelector('[id^="foto_ktp_preview"]');
+
+            // Get data attributes
             const id = button.getAttribute('data-id');
             const nama = button.getAttribute('data-nama');
             const telphon = button.getAttribute('data-telphon');
@@ -92,26 +134,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const tanggalKeluar = button.getAttribute('data-tanggal-keluar');
             const note = button.getAttribute('data-note');
 
+            // Populate form fields
             form.action = `/penghuni/${id}`;
             form.querySelector('#tenantId').value = id;
-            form.querySelector('#nama').value = nama;
-            form.querySelector('#telphon').value = telphon;
-            form.querySelector('#dp').value = dp;
-            form.querySelector('#tanggal_masuk').value = tanggalMasuk;
-            form.querySelector('#tanggal_keluar').value = tanggalKeluar;
-            form.querySelector('#note').value = note;
+            form.querySelector('[id^="nama"]').value = nama;
+            form.querySelector('[id^="telphon"]').value = telphon;
+            form.querySelector('[id^="dp"]').value = dp;
+            form.querySelector('[id^="tanggal_masuk"]').value = tanggalMasuk;
+            form.querySelector('[id^="tanggal_keluar"]').value = tanggalKeluar;
+            form.querySelector('[id^="note"]').value = note;
 
             if (fotoKtp) {
-                fotoPreview.src = `/public/ktp_images/${fotoKtp}`; // Use Laravel's /storage/ path
+                fotoPreview.src = `/storage/ktp_images/${fotoKtp}`;
                 fotoPreview.style.display = 'block';
             } else {
                 fotoPreview.style.display = 'none';
             }
 
-
+            // Show the modal
             modal.classList.remove('hidden');
         });
     });
+});
+
 
     // Add an event listener to update the preview when a file is selected
     fotoInput.addEventListener('change', (event) => {

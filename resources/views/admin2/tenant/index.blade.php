@@ -69,7 +69,7 @@
                                 </th>
                                 <td class="px-4 py-3">{{ $tenant->phone }}</td>
                                 <td class="px-4 py-3">
-                                    <img src="{{ Storage::url($tenant->ktp) }}" alt="Foto KTP" class="w-[100] h-20 object-cover rounded-md">
+                                    <img src="{{ route('ktp.image.show', basename($tenant->ktp)) }}" alt="Foto KTP" class="w-[100] h-20 object-cover rounded-md">
                                 </td>
                                 <td class="px-4 py-3">{{ $tenant->dp }}</td>
                                 <td class="px-4 py-3 max-w-[12rem] truncate">{{ $tenant->start_date }}</td>
@@ -77,7 +77,7 @@
                                 <td class="px-4 py-3">{{ $tenant->note }}</td>
                                 <td class="px-4 py-3 flex items-center justify-end">
                                     <!-- Action Button -->
-                                    <button id="action-dropdown-{{ $index }}" data-dropdown-toggle="dropdown-{{ $index }}" 
+                                    <button id="action-dropdown-tenant{{ $index }}" data-dropdown-toggle="dropdown-{{ $index }}" 
                                         class="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" 
                                         type="button">
                                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -87,13 +87,9 @@
                 
                                     <!-- Dropdown Menu -->
                                         <div id="dropdown-{{ $index }}" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                                            <ul class="py-1 text-sm" aria-labelledby="action-dropdown-{{ $index }}">
+                                            <ul class="py-1 text-sm" aria-labelledby="action-dropdown-tenant{{ $index }}">
                                                 <li>
-                                                    <button type="button" data-modal-target="updatetenant" data-modal-toggle="updatetenant-{{ $tenant->id }}" 
-                                                    {{-- dibawah ini dipake untuk ambil datanya untuk dipake ke blade sebelah --------------------------------------------------- --}}
-                                                        {{-- data-id="{{ $tenant->id }}" data-name="{{ $tenant->name }}" data-phone="{{ $tenant->phone }}" 
-                                                        data-dp="{{ $tenant->dp }}" data-tanggal-masuk="{{ $tenant->start_date }}" 
-                                                        data-tanggal-keluar="{{ $tenant->end }}" data-note="{{ $tenant->note }}"data-ktp="{{$tenant->ktp}}"  --}}
+                                                    <button type="button" data-modal-target="updatetenant-{{ $tenant->id }}" data-modal-toggle="updatetenant-{{ $tenant->id }}" 
                                                         class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-gray-700 dark:text-gray-200 open-edit-modal">
                                                         <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                                             <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
@@ -201,131 +197,132 @@
     </div>
 
 {{-- ---Model edit/update tenant--------------------------------------------- --}}
-@foreach ($tenants as $tenant)
-<div id="updatetenant-{{ $tenant->id }}" tabindex="-1" aria-hidden="true" 
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-lg">
-    <div class="relative w-full max-w-lg max-h-full bg-white rounded-lg shadow dark:bg-gray-700">
-        <!-- Modal Header -->
-        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Edit Tenant admin2</h3>
-            <button type="button" 
-                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 dark:hover:bg-gray-600 dark:hover:text-white"
-                data-modal-hide="updatetenant-{{ $tenant->id }}">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-            </button>
-        </div>
-        
-        <!-- Modal Form -->
-        <form method="POST" action="{{ route('tenant.update', $tenant->id) }}" class="p-6">
-            @csrf
-            @method('PUT')
-        
-            <!-- Tenant Name -->
-            <div class="mb-4">
-                <label for="nama-{{ $tenant->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Tenant Name
-                </label>
-                <input type="text" id="nama-{{ $tenant->id }}" name="nama" value="{{ $tenant->nama }}" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-            </div>
-        
-            <!-- Phone Number -->
-            <div class="mb-4">
-                <label for="telphon-{{ $tenant->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Phone Number
-                </label>
-                <input type="text" id="telphon-{{ $tenant->id }}" name="telphon" value="{{ $tenant->telphon }}" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-            </div>
-        
-            <!-- KTP Photo -->
-            <div class="mb-4">
-                <label for="ktp-{{ $tenant->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    KTP Photo
-                </label>
-                <input type="file" id="ktp-{{ $tenant->id }}" name="ktp" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-                <!-- Preview Image -->
-                <img id="foto_ktp_preview-{{ $tenant->id }}" class="mt-3 max-w-full max-h-32 rounded shadow-sm" alt="KTP Preview" />
-            </div>
-        
-            <!-- Deposit -->
-            <div class="mb-4">
-                <label for="dp-{{ $tenant->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Deposit
-                </label>
-                <input type="number" id="dp-{{ $tenant->id }}" name="dp" value="{{ $tenant->dp }}" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-            </div>
-        
-            <!-- Check-in Date -->
-            <div class="mb-4">
-                <label for="tanggal_masuk-{{ $tenant->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Check-in Date
-                </label>
-                <input type="date" id="tanggal_masuk-{{ $tenant->id }}" name="tanggal_masuk" value="{{ $tenant->tanggal_masuk }}" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-            </div>
-        
-            <!-- Check-out Date -->
-            <div class="mb-4">
-                <label for="tanggal_keluar-{{ $tenant->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Check-out Date
-                </label>
-                <input type="date" id="tanggal_keluar-{{ $tenant->id }}" name="tanggal_keluar" value="{{ $tenant->tanggal_keluar }}" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-            </div>
-        
-            <!-- Notes -->
-            <div class="mb-4">
-                <label for="note-{{ $tenant->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Notes
-                </label>
-                <textarea id="note-{{ $tenant->id }}" name="note" rows="3" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">{{ $tenant->note }}</textarea>
-            </div>
-        
-            <!-- Save Button -->
-            <div class="flex items-center justify-end space-x-4">
+    @foreach ($tenants as $tenant_update)
+    <div id="updatetenant-{{ $tenant_update->id }}" tabindex="-1" aria-hidden="true" 
+        class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-lg">
+        <div class="relative w-full max-w-lg max-h-full bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Edit Tenant admin2</h3>
                 <button type="button" 
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
-                    data-modal-hide="updatetenant-{{ $tenant->id }}">
-                    Cancel
-                </button>
-                <button type="submit" 
-                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
-                    Save Changes
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-hide="updatetenant-{{ $tenant_update->id }}">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
                 </button>
             </div>
-        </form>            
-    </div>
-</div>
-@endforeach
+            
+            <!-- Modal Form -->
+            <form method="POST" action="{{ route('tenant.update', $tenant_update->id) }}" enctype="multipart/form-data" class="p-6">
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const fotoInputs = document.querySelectorAll('[id^="ktp-"]');
-        fotoInputs.forEach(input => {
-            input.addEventListener('change', (event) => {
-                const tenantId = input.id.split('-')[1];
-                const fotoPreview = document.getElementById(`foto_ktp_preview-${tenantId}`);
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        fotoPreview.src = e.target.result;
-                        fotoPreview.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    fotoPreview.style.display = 'none';
-                }
+                @csrf
+                @method('PUT')
+            
+                <!-- Tenant Name -->
+                <div class="mb-4">
+                    <label for="name-{{ $tenant_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Tenant Name
+                    </label>
+                    <input type="text" id="name-{{ $tenant_update->id }}" name="name" value="{{ $tenant_update->name }}" 
+                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+                </div>
+            
+                <!-- Phone Number -->
+                <div class="mb-4">
+                    <label for="phone-{{ $tenant_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Phone Number
+                    </label>
+                    <input type="text" id="phone-{{ $tenant_update->id }}" name="phone" value="{{ $tenant_update->phone }}" 
+                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+                </div>
+            
+                <!-- KTP Photo -->
+                <div class="mb-4">
+                    <label for="ktp-{{ $tenant_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        KTP Photo
+                    </label>
+                    <input type="file" id="ktp-{{ $tenant_update->id }}" name="ktp" 
+                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+                    <!-- Preview Image -->
+                    <img id="foto_ktp_preview-{{ $tenant_update->id }}" class="mt-3 max-w-full max-h-32 rounded shadow-sm" alt="KTP Preview" />
+                </div>
+            
+                <!-- Deposit -->
+                <div class="mb-4">
+                    <label for="dp-{{ $tenant_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Deposit
+                    </label>
+                    <input type="number" id="dp-{{ $tenant_update->id }}" name="dp" value="{{ $tenant_update->dp }}" 
+                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+                </div>
+            
+                <!-- Check-in Date -->
+                <div class="mb-4">
+                    <label for="start_date-{{ $tenant_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Check-in Date
+                    </label>
+                    <input type="date" id="start_date-{{ $tenant_update->id }}" name="start_date" value="{{ $tenant_update->start_date }}" 
+                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+                </div>
+            
+                <!-- Check-out Date -->
+                <div class="mb-4">
+                    <label for="end_date-{{ $tenant_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Check-out Date
+                    </label>
+                    <input type="date" id="end_date-{{ $tenant_update->id }}" name="end_date" value="{{ $tenant_update->end_date }}" 
+                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+                </div>
+            
+                <!-- Notes -->
+                <div class="mb-4">
+                    <label for="note-{{ $tenant_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Notes
+                    </label>
+                    <textarea id="note-{{ $tenant_update->id }}" name="note" rows="3" 
+                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">{{ $tenant_update->note }}</textarea>
+                </div>
+            
+                <!-- Save Button -->
+                <div class="flex items-center justify-end space-x-4">
+                    <button type="button" 
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                        data-modal-hide="updatetenant-{{ $tenant_update->id }}">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                        Save Changes
+                    </button>
+                </div>
+            </form>            
+        </div>
+    </div>
+    @endforeach
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fotoInputs = document.querySelectorAll('[id^="ktp-"]');
+            fotoInputs.forEach(input => {
+                input.addEventListener('change', (event) => {
+                    const tenantId = input.id.split('-')[1];
+                    const fotoPreview = document.getElementById(`foto_ktp_preview-${tenantId}`);
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            fotoPreview.src = e.target.result;
+                            fotoPreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        fotoPreview.style.display = 'none';
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 
 
 {{-- model delete tenant --------------------------------------------------------------------------}}

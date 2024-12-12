@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatistikController;
 use App\Models\Meteran;
 use App\Models\Tenant;
+use App\Http\Controllers\KTPImageController;
 use Illuminate\Support\Facades\Route;
 // ---------------------------------------------------------------
 use App\Http\Controllers\TenantController;
@@ -45,7 +46,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //INI ROUTE RESOURCE broadcast cuman buat 2 index dan store aja karena broadcast perlu 2 itu aja untuk sekarang
     Route::resource('broadcast', BroadcastController::class)->only(['index', 'store']);
     Route::post('/broadcast/send', [BroadcastController::class, 'send'])->name('broadcast.send');
-// ---------------------------------------------------------ADMIN2-------------------------------------------
+    //------------------------------------------
+    Route::middleware(['auth'])->get('/ktp/images/{filename}', [KTPImageController::class, 'show'])->name('ktp.image.show');
+
+
+
+
+    // ---------------------------------------------------------ADMIN2-------------------------------------------
     Route::get('/tenant',[TenantController::class,'index'])->name('tenant.index');
     Route::resource('tenant',TenantController::class);
     

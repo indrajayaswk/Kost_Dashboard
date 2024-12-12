@@ -94,14 +94,31 @@ class TenantController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
             'dp' => 'required|numeric',
-            'ktp' => 'nullable|file|image|max:10000', // 10MB
+            'ktp' => 'required|image|mimes:jpeg,png,jpg,gif|max:10000', // 10MB
             'note' => 'nullable|string',
         ], [
-            'ktp.max' => 'The KTP image must not exceed 2MB.', // Custom message
-            'required' => ':attribute is required.',
-            'numeric' => ':attribute must be a number.',
-            'date' => ':attribute must be a valid date.',
-            'image' => ':attribute must be an image file.',
+            'name.required' => 'Please provide the tenant\'s name.',
+            'name.string' => 'The tenant\'s name must be a valid string.',
+            'name.max' => 'The tenant\'s name cannot exceed 255 characters.',
+            
+            'phone.required' => 'The phone number is required.',
+            'phone.string' => 'The phone number must be a valid string.',
+            'phone.max' => 'The phone number cannot exceed 15 characters.',
+            
+            'start_date.required' => 'The check-in date is required.',
+            'start_date.date' => 'The check-in date must be a valid date.',
+            
+            'end_date.date' => 'The check-out date must be a valid date.',
+            
+            'dp.required' => 'The deposit amount is required.',
+            'dp.numeric' => 'The deposit amount must be a valid number.',
+            
+            'ktp.required' => 'The KTP image is required.',
+            'ktp.image' => 'The uploaded KTP must be an image file.',
+            'ktp.mimes' => 'The KTP image must be in one of the following formats: jpeg, png, jpg, gif.',
+            'ktp.max' => 'The KTP image must not exceed 10MB.',
+            
+            'note.string' => 'The note must be a valid string.',
         ]);
 
         // Proceed with storing data
@@ -114,7 +131,7 @@ class TenantController extends Controller
         $tenant->note = $request->note;
 
         if ($request->hasFile('ktp')) {
-            $path = $request->file('ktp')->store('ktp_images', 'public');
+            $path = $request->file('ktp')->store('ktp_images');
             $tenant->ktp = $path;
         }
 
@@ -143,48 +160,46 @@ class TenantController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
-            'dp' => 'required|numeric',
-            'ktp' => 'nullable|file|image|max:10000',
-            'note' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:15',
+        'start_date' => 'required|date',
+        'end_date' => 'nullable|date',
+        'dp' => 'required|numeric',
+        'ktp' => 'nullable|file|image|max:10000',
+        'note' => 'nullable|string',
+    ]);
 
-        $tenant = Tenant::findOrFail($id);
+    $tenant = Tenant::findOrFail($id);
 
-        // Update fields
-        $tenant->name = $request->name;
-        $tenant->phone = $request->phone;
-        $tenant->start_date = $request->start_date;
-        $tenant->end_date = $request->end_date;
-        $tenant->dp = $request->dp;
-        $tenant->note = $request->note;
+    // Update fields
+    $tenant->name = $request->name;
+    $tenant->phone = $request->phone;
+    $tenant->start_date = $request->start_date;
+    $tenant->end_date = $request->end_date;
+    $tenant->dp = $request->dp;
+    $tenant->note = $request->note;
 
-        if ($request->hasFile('ktp')) {
-            // Delete old file
-            if ($tenant->ktp && Storage::exists('public/' . $tenant->ktp)) {
-                Storage::delete('public/' . $tenant->ktp);
-            }
-
-            // Save the new file
-            $file = $request->file('ktp');
-            $path = $file->store('ktp_images', 'public');
-
-            if ($path) {
-                $tenant->ktp = $path;
-            } else {
-                return back()->with('error', 'Failed to upload KTP image.');
-            }
+    if ($request->hasFile('ktp')) {
+        // Save the new file securely in storage/app/ktp_images
+        $file = $request->file('ktp');
+        $path = $file->store('ktp_images');
+    
+        if ($path) {
+            // Update the database with the new file path
+            $tenant->ktp = $path;
+        } else {
+            return back()->with('error', 'Failed to upload KTP image.');
         }
-
-        $tenant->save();
-
-        return redirect()->route('tenant.index')->with('success', 'Tenant updated successfully!');
     }
+    
+    $tenant->save();
+    
+    return redirect()->route('tenant.index')->with('success', 'Tenant updated successfully!');
+    
+}
+
 
     /**
      * Remove the specified resource from storage.
