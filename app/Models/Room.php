@@ -14,6 +14,7 @@ class Room extends Model
      *
      * @var array
      */
+    ///////ini dipake untuk mass assigment (bantu populasi data ke database dari seeder)
     protected $fillable = [
         'room_number', 
         'room_type', 
