@@ -32,6 +32,7 @@
 @include('admin.kamar.kamar-update')
 {{-- ---------------------------------------------------------- --}}
 @include('admin2.tenant.tenant-add')
+@include('admin2.room.room-add')
 
 {{-- ------------------------ End of CRUD includes ------------------------ --}}
 

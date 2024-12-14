@@ -11,6 +11,7 @@ use App\Http\Controllers\StatistikController;
 use App\Models\Meteran;
 use App\Models\Tenant;
 use App\Http\Controllers\KTPImageController;
+use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
 // ---------------------------------------------------------------
 use App\Http\Controllers\TenantController;
@@ -54,6 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ---------------------------------------------------------ADMIN2-------------------------------------------
     Route::resource('tenant',TenantController::class);
+    Route::resource('room', RoomController::class);
     
 });
 
