@@ -33,6 +33,7 @@
 {{-- ---------------------------------------------------------- --}}
 @include('admin2.tenant.tenant-add')
 @include('admin2.room.room-add')
+@include('admin2.meter.meter-add')
 
 {{-- ------------------------ End of CRUD includes ------------------------ --}}
 

@@ -11,10 +11,13 @@ use App\Http\Controllers\StatistikController;
 use App\Models\Meteran;
 use App\Models\Tenant;
 use App\Http\Controllers\KTPImageController;
+use App\Http\Controllers\MeterController;
 use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
 // ---------------------------------------------------------------
 use App\Http\Controllers\TenantController;
+use App\Models\Meter;
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -56,6 +59,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------------ADMIN2-------------------------------------------
     Route::resource('tenant',TenantController::class);
     Route::resource('room', RoomController::class);
+    Route::resource('meter',MeterController::class);
+
+    
+    //-----------------------------------testing----------------------------------
     
 });
 
