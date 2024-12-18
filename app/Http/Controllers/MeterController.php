@@ -99,4 +99,15 @@ class MeterController extends Controller
 
         return redirect()->route('meter.index')->with('success', 'Meter deleted successfully!');
     }
+    
+    /**
+     * Restoring Soft-Deleted Records:
+    */
+    public function restore($id)
+    {
+        $tenant = Meter::onlyTrashed()->findOrFail($id);
+        $tenant->restore();
+    
+        return redirect()->route('tenant.index')->with('success', 'Tenant restored successfully!');
+    }
 }
