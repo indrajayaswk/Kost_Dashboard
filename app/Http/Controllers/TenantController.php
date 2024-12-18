@@ -145,6 +145,11 @@ class TenantController extends Controller
      */
     public function show(Tenant $tenant)
     {
+        /**
+         * Soft Delete
+         * You can retrieve only soft-deleted records using the onlyTrashed() method. (Displaying Soft-Deleted
+         */
+        $trashedTenants = Tenant::onlyTrashed()->get();
         return view('admin.tenant.show', compact('tenant'));
     }
 
@@ -200,15 +205,31 @@ class TenantController extends Controller
     
 }
 
-
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage (soft delete).
      */
     public function destroy(Tenant $tenant)
     {
-        // Delete the tenant
+        // Perform a soft delete
         $tenant->delete();
 
-        return redirect()->route('tenant.index');
+        
+        // $tenant->forceDelete();  ------>perform Permenant delete
+
+        // Redirect back with a success message
+        return redirect()->route('tenant.index')->with('success', 'Tenant soft-deleted successfully!');
     }
+
+
+    /**
+     * Restoring Soft-Deleted Records:
+    */
+    public function restore($id)
+{
+    $tenant = Tenant::onlyTrashed()->findOrFail($id);
+    $tenant->restore();
+
+    return redirect()->route('tenant.index')->with('success', 'Tenant restored successfully!');
+}
+
 }
