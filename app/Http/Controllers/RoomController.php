@@ -110,7 +110,18 @@ class RoomController extends Controller
     public function destroy(Room $room)
     {
         $room->delete();
-
+        // $room->forceDelete();  ------>perform Permenant delete
         return redirect()->route('room.index')->with('success', 'Room deleted successfully!');
+    }
+
+    /**
+     * Restore softdeleted data
+     */
+    public function restore($id)
+    {
+        $room = Room::onlyTrashed()->findOrFail($id);
+        $room->restore();
+
+        return redirect()->route('room.index')->with('success', 'Room restored successfully!');
     }
 }
