@@ -16,7 +16,9 @@ use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
 // ---------------------------------------------------------------
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\TenantRoomController;
 use App\Models\Meter;
+use App\Models\TenantRoom;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -60,7 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('tenant',TenantController::class);
     Route::resource('room', RoomController::class);
     Route::resource('meter',MeterController::class);
-
+    Route::resource('tenant-room',TenantRoomController::class);
     
     //-----------------------------------testing----------------------------------
     
