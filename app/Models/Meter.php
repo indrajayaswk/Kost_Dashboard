@@ -16,7 +16,7 @@ class Meter extends Model
      */
     ///////ini dipake untuk mass assigment (bantu populasi data ke database dari seeder)
     protected $fillable = [
-        'id_meters', 
+        'id', 
         'meters',
         'month', 
     ];
@@ -26,7 +26,7 @@ class Meter extends Model
      *
      * @var string
      */
-    protected $primaryKey = 'id_meters'; // Specify the correct primary key column
+    protected $primaryKey = 'id'; // Specify the correct primary key column
 
     /**
      * Indicates if the IDs are auto-incrementing.

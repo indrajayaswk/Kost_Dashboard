@@ -68,23 +68,23 @@ class MeterController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id_meters)
+    public function edit($id)
     {
-        $meters = Meter::findOrFail($id_meters);
+        $meters = Meter::findOrFail($id);
         return view('admin2.meter.edit', compact('meters'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id_meters)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'meters' => 'required|integer|min:0',
             'month'=>'required|date'
         ]);
 
-        $meter = Meter::findOrFail($id_meters);
+        $meter = Meter::findOrFail($id);
         $meter->update($request->only(['meters','month']));
 
         return redirect()->route('meter.index')->with('success', 'Meter updated successfully!');
