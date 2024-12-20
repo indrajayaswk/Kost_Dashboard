@@ -49,7 +49,7 @@
                           <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                               {{ $meter->id }}
                           </th>
-                          <td class="px-4 py-3">{{ $meter->meter_number }}</td>
+                          <td class="px-4 py-3">{{ $meter->kwh_number }}</td>
                           <td class="px-4 py-3">{{ $meter->month }}</td>
                           <td class="px-4 py-3">{{$meter->created_at}}</td>
                           <td class="px-4 py-3">{{ $meter->updated_at }}</td>
@@ -160,7 +160,7 @@
                     <label for="meters-{{ $meter_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
                         Meter Reading
                     </label>
-                    <input type="number" id="meters-{{ $meter_update->id }}" name="meter_number" value="{{ $meter_update->meter_number }}" 
+                    <input type="number" id="meters-{{ $meter_update->id }}" name="kwh_number" value="{{ $meter_update->kwh_number }}" 
                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
                 </div>
             

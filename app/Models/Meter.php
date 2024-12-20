@@ -17,7 +17,7 @@ class Meter extends Model
     ///////ini dipake untuk mass assigment (bantu populasi data ke database dari seeder)
     protected $fillable = [
         'id', 
-        'meter_number',
+        'kwh_number',
         'month', 
     ];
 

@@ -41,7 +41,7 @@ class MeterController extends Controller
     {
         // Validate the input
         $validated = $request->validate([
-            'meter_number' => 'required|integer|min:0',
+            'kwh_number' => 'required|integer|min:0',
             'month' => 'required|date', // This ensures month is a valid date
         ]);
     
@@ -80,12 +80,12 @@ class MeterController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'meter_number' => 'required|integer|min:0',
+            'kwh_number' => 'required|integer|min:0',
             'month'=>'required|date'
         ]);
 
         $meter = Meter::findOrFail($id);
-        $meter->update($request->only(['meter_number','month']));
+        $meter->update($request->only(['kwh_number','month']));
 
         return redirect()->route('meter.index')->with('success', 'Meter updated successfully!');
     }
