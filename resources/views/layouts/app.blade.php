@@ -19,8 +19,9 @@
 </head>
 
 {{-- All CRUD components can be included here or inside the body --}}
-
-@include('admin.dashboard.dashboard_add')
+{{-- INI DITARUK INCLUDENYA DIDALEM BODY/INDEX FILE --}}
+{{-- ini include dibawah ini sudah tidak dipakai lagi-}}
+{{-- @include('admin.dashboard.dashboard_add')
 @include('admin.dashboard.dashboard_update')
 @include('admin.dashboard.dashboard_read')
 @include('admin.dashboard.dashboard_delete')
@@ -29,11 +30,11 @@
 @include('admin.penghuni.penghuni-update')
 
 @include('admin.kamar.kamar-add')
-@include('admin.kamar.kamar-update')
-{{-- ---------------------------------------------------------- --}}
-@include('admin2.tenant.tenant-add')
-@include('admin2.room.room-add')
-@include('admin2.meter.meter-add')
+@include('admin.kamar.kamar-update') --}}
+
+
+
+
 
 {{-- ------------------------ End of CRUD includes ------------------------ --}}
 

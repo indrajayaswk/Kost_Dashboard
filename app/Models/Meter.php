@@ -2,57 +2,75 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Meter extends Model
 {
-    use HasFactory,SoftDeletes;
-        /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    ///////ini dipake untuk mass assigment (bantu populasi data ke database dari seeder)
+    use HasFactory, SoftDeletes;
+
+    // The table associated with the model.
+    protected $table = 'meters';
+
+    // The primary key for the model.
+    protected $primaryKey = 'id';
+
+    // The attributes that are mass assignable.
     protected $fillable = [
-        'id', 
+        'tenant_room_id',
         'kwh_number',
-        'month', 
+        'total_kwh',
+        'total_price',
+        'price_per_kwh',
+        'status',
+        'pay_proof',
+        'month',
     ];
 
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id'; // Specify the correct primary key column
+    // The attributes that should be mutated to dates.
+    protected $dates = ['created_at', 'updated_at', 'deleted_at', 'month'];
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = true; // Set to true if the primary key is auto-incrementing
+    // The relationship between Meter and TenantRoom
+    public function tenantRoom()
+    {
+        return $this->belongsTo(TenantRoom::class, 'tenant_room_id');
+    }
 
-    /**
-     * The data type of the primary key.
-     *
-     * @var string
-     */
-    protected $keyType = 'int'; // Specify the data type of the primary key
+    // Calculate total_kwh based on kwh_number and previous record
+    public function calculateTotalKwh()
+    {
+        // Assuming you want to compare the current kwh_number with the previous record
+        $previousMeter = Meter::where('tenant_room_id', $this->tenant_room_id)
+                              ->latest()
+                              ->first();
 
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = true; // This will use the 'created_at' and 'updated_at' columns automatically
+        if ($previousMeter) {
+            $this->total_kwh = $this->kwh_number - $previousMeter->kwh_number;
+        } else {
+            $this->total_kwh = $this->kwh_number;
+        }
 
-            /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at']; // Ensure deleted_at is cast as a date
+        // Make sure total_kwh doesn't go below 0
+        $this->total_kwh = max($this->total_kwh, 0);
+    }
+
+    // Calculate total_price based on total_kwh and price_per_kwh
+    public function calculateTotalPrice()
+    {
+        $this->total_price = $this->total_kwh * $this->price_per_kwh;
+    }
+
+    // You can also trigger these methods in events or controller logic
+    // Example: Automatically calculate total_kwh and total_price before saving the model
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($meter) {
+            // Automatically calculate total_kwh and total_price before saving
+            $meter->calculateTotalKwh();
+            $meter->calculateTotalPrice();
+        });
+    }
 }

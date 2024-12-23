@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use App\Models\Meter;
+use App\Models\TenantRoom; // Import TenantRoom model
 use Illuminate\Http\Request;
 
 class MeterController extends Controller
@@ -22,17 +23,25 @@ class MeterController extends Controller
 
         // Paginate results
         $meters = $query->paginate(10);
+        // Fetch tenant rooms for the modal
+        $tenantRooms = TenantRoom::with(['tenant', 'room'])->active()->get();
 
-        return view('admin2.meter.index', compact('meters'));
+        // Return the view with the required data
+        return view('admin2.meter.index', compact('meters', 'tenantRooms'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
+    // engga dipakai, karena makenya bukan lewat url tapi dinamis
     public function create()
     {
-        return view('admin2.meter.create');
+        // Fetch available tenant rooms (including room_number)
+        // $tenantRooms = TenantRoom::with('room')->get(); // Eager load the related Room model if necessary
+        $tenantRooms = TenantRoom::all();
+        return view('admin2.meter.create', compact('tenantRooms'));
     }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -41,21 +50,29 @@ class MeterController extends Controller
     {
         // Validate the input
         $validated = $request->validate([
+            'tenant_room_id' => 'required|exists:tenant_rooms,id', // Ensure tenant_room_id exists in tenant_rooms table
             'kwh_number' => 'required|integer|min:0',
-            'month' => 'required|date', // This ensures month is a valid date
+            'month' => 'required|date',
+            'price_per_kwh' => 'required|numeric|min:0',
         ]);
-    
+        
         // Log validated data for debugging purposes (optional)
         Log::info('Data validated: ', $validated);
     
         // Create the record
-        Meter::create($validated);
+        $meter = Meter::create($validated);
+    
+        // Calculate total_kwh and total_price after creating the record
+        $meter->calculateTotalKwh();
+        $meter->calculateTotalPrice();
+    
+        // Save the updated meter with calculated values
+        $meter->save();
     
         // Redirect with a success message
         return redirect()->route('meter.index')->with('success', 'Meter successfully added.');
     }
     
-
 
     /**
      * Display the specified resource.
@@ -70,8 +87,10 @@ class MeterController extends Controller
      */
     public function edit($id)
     {
-        $meters = Meter::findOrFail($id);
-        return view('admin2.meter.edit', compact('meters'));
+        $meter = Meter::findOrFail($id);
+        // Fetch available tenant rooms to edit the meter
+        $tenantRooms = TenantRoom::all();
+        return view('admin2.meter.edit', compact('meter', 'tenantRooms'));
     }
 
     /**
@@ -80,14 +99,25 @@ class MeterController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'tenant_room_id' => 'required|exists:tenant_rooms,id', // Ensure tenant_room_id exists
             'kwh_number' => 'required|integer|min:0',
-            'month'=>'required|date'
+            'month' => 'required|date',
+            'price_per_kwh' => 'required|numeric|min:0',
         ]);
 
-        $meter = Meter::findOrFail($id);
-        $meter->update($request->only(['kwh_number','month']));
+            $meter = Meter::findOrFail($id);
 
-        return redirect()->route('meter.index')->with('success', 'Meter updated successfully!');
+            // Update the meter with validated data
+            $meter->update($request->only(['tenant_room_id', 'kwh_number', 'month', 'price_per_kwh']));
+
+            // Recalculate total_kwh and total_price after updating
+            $meter->calculateTotalKwh();
+            $meter->calculateTotalPrice();
+
+            // Save the updated meter with recalculated values
+            $meter->save();
+
+            return redirect()->route('meter.index')->with('success', 'Meter updated successfully!');
     }
 
     /**
@@ -99,15 +129,15 @@ class MeterController extends Controller
 
         return redirect()->route('meter.index')->with('success', 'Meter deleted successfully!');
     }
-    
+
     /**
      * Restoring Soft-Deleted Records:
-    */
+     */
     public function restore($id)
     {
-        $tenant = Meter::onlyTrashed()->findOrFail($id);
-        $tenant->restore();
-    
-        return redirect()->route('tenant.index')->with('success', 'Tenant restored successfully!');
+        $meter = Meter::onlyTrashed()->findOrFail($id);
+        $meter->restore();
+
+        return redirect()->route('meter.index')->with('success', 'Meter restored successfully!');
     }
 }

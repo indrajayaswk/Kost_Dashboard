@@ -26,6 +26,9 @@ class TenantRoom extends Model
     {
         return $query->where('status', 'active');
     }
-
+    public function meters()
+    {
+        return $this->hasMany(Meter::class, 'tenant_room_id');
+    }
     
 }
