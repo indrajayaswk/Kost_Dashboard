@@ -10,8 +10,9 @@ class TenantRoom extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['tenant_id', 'room_id', 'status'];
+    protected $fillable = ['tenant_id', 'room_id', 'status', 'start_date', 'end_date', 'note'];
 
+    protected $dates = ['start_date', 'end_date']; 
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
@@ -26,9 +27,9 @@ class TenantRoom extends Model
     {
         return $query->where('status', 'active');
     }
+
     public function meters()
     {
         return $this->hasMany(Meter::class, 'tenant_room_id');
     }
-    
 }

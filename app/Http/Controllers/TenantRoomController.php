@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
-
+use Illuminate\Support\Facades\Log;
 use App\Models\Tenant; 
 use App\Models\Room; 
 use App\Models\TenantRoom;
@@ -14,51 +13,67 @@ class TenantRoomController extends Controller
     {
         // Eager load the relationships
         $tenantRooms = TenantRoom::with(['tenant', 'room'])->get();
-    
-        // Pass the data to the view
-        return view('admin2.tenant-room.index', compact('tenantRooms'));
-    }
-    
-    public function create()
-    {
-        // Get all tenants and rooms
         $tenants = Tenant::all();
         $rooms = Room::all();
-    
-        // Pass tenants and rooms to the view
-        return view('admin2.tenant-room.tenant-room-add', compact('tenants', 'rooms'));
+        // Pass the data to the view
+        return view('admin2.tenant-room.index', compact('tenantRooms', 'tenants', 'rooms'));
     }
     
     public function store(Request $request)
-    {
+{
+    try {
         // Validate the incoming request
         $data = $request->validate([
             'tenant_id' => 'required|exists:tenants,id',
             'room_id' => 'required|exists:rooms,id',
             'status' => 'required|in:active,inactive',
+            'note' => 'nullable|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date', // Ensure end_date is after start_date
         ]);
 
         // Store the tenant-room assignment
         TenantRoom::create($data);
 
-        // Redirect back to the index page or wherever needed
-        return redirect()->route('tenant-room.index');
+        return redirect()->route('tenant-room.index')->with('success', 'Tenant assigned to room successfully.');
+    } catch (\Exception $e) {
+        // Log the error
+        Log::error('Error storing tenant room: ' . $e->getMessage());
+
+        // Return with an error message
+        return redirect()->route('tenant-room.index')->with('error', 'An error occurred while assigning the tenant to the room.');
     }
+}
 
-
-    public function update(Request $request, TenantRoom $tenantRoom)
-    {
+public function update(Request $request, TenantRoom $tenantRoom)
+{
+    try {
+        // Validate the incoming request
         $data = $request->validate([
+            'tenant_id' => 'required|exists:tenants,id',
+            'room_id' => 'required|exists:rooms,id',
             'status' => 'required|in:active,inactive',
+            'note' => 'nullable|string|max:255',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date', // Ensure end_date is after start_date
         ]);
-
+        // dd($data);
+        // Update the tenant-room record
         $tenantRoom->update($data);
-        return $tenantRoom;
+
+        return redirect()->route('tenant-room.index')->with('success', 'Tenant-room record updated successfully.');
+    } catch (\Exception $e) {
+        // Log the error
+        Log::error('Error updating tenant room: ' . $e->getMessage());
+
+        // Return with an error message
+        return redirect()->route('tenant-room.index')->with('error', 'An error occurred while updating the tenant-room record.');
     }
+}
 
     public function destroy(TenantRoom $tenantRoom)
     {
         $tenantRoom->delete();
-        return response()->noContent();
+        return redirect()->route('tenant-room.index')->with('success', 'Tenant-room record deleted successfully.');
     }
 }

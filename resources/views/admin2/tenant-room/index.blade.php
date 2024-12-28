@@ -42,6 +42,9 @@
                     <th scope="col" class="px-4 py-3">Phone</th>
                     <th scope="col" class="px-4 py-3">Room Number</th>
                     <th scope="col" class="px-4 py-3">Status</th>
+                    <th scope="col" class="px-4 py-4">Notes</th>
+                    <th scope="col" class="px-4 py-3">start At</th>
+                    <th scope="col" class="px-4 py-3">End At</th>
                     <th scope="col" class="px-4 py-3">Action</th>
                 </tr>
             </thead>
@@ -53,6 +56,9 @@
                         <td class="px-4 py-4">{{ $tenantRoom->tenant->phone }}</td>
                         <td class="px-4 py-4">{{ $tenantRoom->room->room_number }}</td>
                         <td class="px-4 py-4">{{ ucfirst($tenantRoom->status) }}</td>
+                        <td class="px-4 py-4">{{$tenantRoom->note}}</td>
+                        <td class="px-4 py-4">{{$tenantRoom->start_date}}</td>
+                        <td class="px-4 py-4">{{$tenantRoom->end_date}}</td>
                         <td class="px-4 py-3 flex items-center justify-end">
                             <!-- Action Button -->
                             <button id="action-dropdown-room{{ $index }}" 
@@ -68,11 +74,11 @@
                             <div id="dropdown-room{{ $index }}" 
                                 class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
                               <ul class="py-1 text-sm" aria-labelledby="action-dropdown-room{{ $index }}">
-                                  {{-- <li>
+                                  <li>
                                       <button 
                                           type="button"  
-                                          data-modal-target="updateroom-{{ $tenantRooms->id }}"
-                                          data-modal-toggle="updateroom-{{ $tenantRooms->id }}"
+                                          data-modal-target="updatetenantroom-{{ $tenantRoom->id }}"
+                                          data-modal-toggle="updatetenantroom-{{ $tenantRoom->id }}"
                                           class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-gray-700 dark:text-gray-200">
                                           <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                               <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
@@ -80,19 +86,19 @@
                                           </svg>
                                           Edit
                                       </button>
-                                  </li> --}}
+                                  </li>
                                   <li>
-                                      {{-- <button 
+                                      <button 
                                           type="button" 
-                                          data-modal-target="deleteModalkamar-{{ $tenantRooms->id }}" 
-                                          data-modal-toggle="deleteModalkamar-{{ $tenantRooms->id }}" 
+                                          data-modal-target="deleteModaltenantroom-{{ $tenantRoom->id }}" 
+                                          data-modal-toggle="deleteModaltenantroom-{{ $tenantRoom->id }}" 
                                           class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400">
                                           <svg class="w-4 h-4 mr-2" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                               <path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" 
                                                   d="M6.09922 0.300781C5.93212 0.30087 5.76835 0.347476 5.62625 0.435378C5.48414 0.523281 5.36931 0.649009 5.29462 0.798481L4.64302 2.10078H1.59922C1.36052 2.10078 1.13161 2.1956 0.962823 2.36439C0.79404 2.53317 0.699219 2.76209 0.699219 3.00078C0.699219 3.23948 0.79404 3.46839 0.962823 3.63718C1.13161 3.80596 1.36052 3.90078 1.59922 3.90078V12.9008C1.59922 13.3782 1.78886 13.836 2.12643 14.1736C2.46399 14.5111 2.92183 14.7008 3.39922 14.7008H10.5992C11.0766 14.7008 11.5344 14.5111 11.872 14.1736C12.2096 13.836 12.3992 13.3782 12.3992 12.9008V3.90078C12.6379 3.90078 12.8668 3.80596 13.0356 3.63718C13.2044 3.46839 13.2992 3.23948 13.2992 3.00078C13.2992 2.76209 13.2044 2.53317 13.0356 2.36439C12.8668 2.1956 12.6379 2.10078 12.3992 2.10078H9.35542L8.70382 0.798481C8.62913 0.649009 8.5143 0.523281 8.37219 0.435378C8.23009 0.347476 8.06632 0.30087 7.89922 0.300781H6.09922ZM8.20322 2.10078L7.85522 1.34878C7.8282 1.29081 7.78682 1.2397 7.73502 1.20099C7.68321 1.16229 7.62293 1.13694 7.55922 1.12798H6.43922C6.37551 1.13694 6.31523 1.16229 6.26343 1.20099C6.21163 1.2397 6.17025 1.29081 6.14322 1.34878L5.79522 2.10078H8.20322Z" />
                                           </svg>
                                           Delete
-                                      </button> --}}
+                                      </button>
                                   </li>
                               </ul>
                           </div>
@@ -101,7 +107,20 @@
                 @endforeach
             </tbody>
         </table>
-
+        {{-- @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif --}}
+    
     </div>
 @include('admin2.tenant-room.components.tenant-room-add')
+@include('admin2.tenant-room.components.tenant-room-delete')
+@include('admin2.tenant-room.components.tenant-room-edit')
 </x-app-layout>
