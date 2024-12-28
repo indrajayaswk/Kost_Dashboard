@@ -12,11 +12,10 @@ class TenantRoomController extends Controller
     public function index()
     {
         // Eager load the relationships
-        $tenantRooms = TenantRoom::with(['tenant', 'room'])->get();
-        $tenants = Tenant::all();
+        $tenantRooms = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->get();
         $rooms = Room::all();
         // Pass the data to the view
-        return view('admin2.tenant-room.index', compact('tenantRooms', 'tenants', 'rooms'));
+        return view('admin2.tenant-room.index', compact('tenantRooms', 'rooms'));
     }
     
     public function store(Request $request)
@@ -24,7 +23,8 @@ class TenantRoomController extends Controller
     try {
         // Validate the incoming request
         $data = $request->validate([
-            'tenant_id' => 'required|exists:tenants,id',
+            'primary_tenant_id' => 'required|exists:tenants,id',
+            'secondary_tenant_id' => 'nullable|exists:tenants,id|different:primary_tenant_id',
             'room_id' => 'required|exists:rooms,id',
             'status' => 'required|in:active,inactive',
             'note' => 'nullable|string|max:255',
@@ -45,12 +45,20 @@ class TenantRoomController extends Controller
     }
 }
 
+public function show($id)
+{
+    $tenantRoom = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->findOrFail($id);
+    return view('tenant-rooms.show', compact('tenantRoom'));
+}
+
+
 public function update(Request $request, TenantRoom $tenantRoom)
 {
     try {
         // Validate the incoming request
         $data = $request->validate([
-            'tenant_id' => 'required|exists:tenants,id',
+            'primary_tenant_id' => 'required|exists:tenants,id',
+            'secondary_tenant_id' => 'nullable|exists:tenants,id|different:primary_tenant_id',
             'room_id' => 'required|exists:rooms,id',
             'status' => 'required|in:active,inactive',
             'note' => 'nullable|string|max:255',

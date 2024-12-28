@@ -38,8 +38,9 @@
             <thead class="sticky top-0 z-10 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-4 py-4">No</th>
-                    <th scope="col" class="px-4 py-4">Tenant Name</th>
-                    <th scope="col" class="px-4 py-3">Phone</th>
+                    <th scope="col" class="px-4 py-4">primary Tenant Name</th>
+                    <th scope="col" class="px-4 py-4">secondary Tenant Name</th>
+                    {{-- <th scope="col" class="px-4 py-3">Phone</th> --}}
                     <th scope="col" class="px-4 py-3">Room Number</th>
                     <th scope="col" class="px-4 py-3">Status</th>
                     <th scope="col" class="px-4 py-4">Notes</th>
@@ -52,8 +53,9 @@
                 @foreach($tenantRooms as $index => $tenantRoom)
                     <tr>
                         <td class="px-4 py-4">{{ $index + 1 }}</td>
-                        <td class="px-4 py-4">{{ $tenantRoom->tenant->name }}</td>
-                        <td class="px-4 py-4">{{ $tenantRoom->tenant->phone }}</td>
+                        <td class="px-4 py-4">{{ $tenantRoom->primaryTenant->name; }}</td>
+                        <td class="px-4 py-4">{{ $tenantRoom->secondaryTenant->name ?? 'N/A'; }}</td>
+                        {{-- <td class="px-4 py-4">{{ $tenantRoom->tenant->phone }}</td> --}}
                         <td class="px-4 py-4">{{ $tenantRoom->room->room_number }}</td>
                         <td class="px-4 py-4">{{ ucfirst($tenantRoom->status) }}</td>
                         <td class="px-4 py-4">{{$tenantRoom->note}}</td>
@@ -120,7 +122,7 @@
     @endif --}}
     
     </div>
-@include('admin2.tenant-room.components.tenant-room-add')
-@include('admin2.tenant-room.components.tenant-room-delete')
-@include('admin2.tenant-room.components.tenant-room-edit')
+{{-- @include('admin2.tenant-room.components.tenant-room-add') --}}
+{{-- @include('admin2.tenant-room.components.tenant-room-delete') --}}
+{{-- @include('admin2.tenant-room.components.tenant-room-edit') --}}
 </x-app-layout>
