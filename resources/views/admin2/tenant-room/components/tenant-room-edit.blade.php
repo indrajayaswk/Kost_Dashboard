@@ -19,21 +19,40 @@
             @csrf
             @method('PUT')
 
-            <!-- Tenant -->
-            <div class="mb-4">
-                <label for="tenant_id-{{ $tenantRoom->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Tenant
-                </label>
-                <select id="tenant_id-{{ $tenantRoom->id }}" name="tenant_id" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-                    @foreach ($tenants as $tenant)
-                        <option value="{{ $tenant->id }}" 
-                            {{ $tenantRoom->tenant_id == $tenant->id ? 'selected' : '' }}>
-                            {{ $tenant->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+        <!-- Primary Tenant -->
+        <div class="mb-4">
+            <label for="primary_tenant_id-{{ $tenantRoom->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Primary Tenant
+            </label>
+            <select id="primary_tenant_id-{{ $tenantRoom->id }}" name="primary_tenant_id" 
+                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+                <option value="">Select Primary Tenant</option>
+                @foreach ($tenants as $tenant)
+                    <option value="{{ $tenant->id }}" 
+                        {{ $tenantRoom->primary_tenant_id == $tenant->id ? 'selected' : '' }}>
+                        {{ $tenant->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Secondary Tenant -->
+        <div class="mb-4">
+            <label for="secondary_tenant_id-{{ $tenantRoom->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Secondary Tenant
+            </label>
+            <select id="secondary_tenant_id-{{ $tenantRoom->id }}" name="secondary_tenant_id" 
+                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+                <option value="">(None)</option>
+                @foreach ($tenants as $tenant)
+                    <option value="{{ $tenant->id }}" 
+                        {{ $tenantRoom->secondary_tenant_id == $tenant->id ? 'selected' : '' }}>
+                        {{ $tenant->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
 
             <!-- Room -->
             <div class="mb-4">

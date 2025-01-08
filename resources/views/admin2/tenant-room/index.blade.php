@@ -92,8 +92,8 @@
                                   <li>
                                       <button 
                                           type="button" 
-                                          data-modal-target="deleteModaltenantroom-{{ $tenantRoom->id }}" 
-                                          data-modal-toggle="deleteModaltenantroom-{{ $tenantRoom->id }}" 
+                                          data-modal-target="deleteModalTenantRoom-{{ $tenantRoom->id }}" 
+                                          data-modal-toggle="deleteModalTenantRoom-{{ $tenantRoom->id }}" 
                                           class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400">
                                           <svg class="w-4 h-4 mr-2" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                               <path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" 
@@ -120,9 +120,12 @@
             {{ session('success') }}
         </div>
     @endif --}}
-    
+        <!-- Pagination -->
+        <div class="mt-4">
+            {{ $tenantRooms->links() }}
+        </div>
     </div>
-{{-- @include('admin2.tenant-room.components.tenant-room-add') --}}
-{{-- @include('admin2.tenant-room.components.tenant-room-delete') --}}
-{{-- @include('admin2.tenant-room.components.tenant-room-edit') --}}
+@include('admin2.tenant-room.components.tenant-room-add')
+@include('admin2.tenant-room.components.tenant-room-delete')
+@include('admin2.tenant-room.components.tenant-room-edit')
 </x-app-layout>

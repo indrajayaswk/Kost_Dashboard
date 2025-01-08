@@ -14,6 +14,7 @@ class TenantRoom extends Model
         'primary_tenant_id',
         'secondary_tenant_id',
         'room_id',
+        'status',
         'start_date',
         'end_date', 
         'note',
@@ -21,16 +22,19 @@ class TenantRoom extends Model
 
     public function primaryTenant()
     {
-        return $this->belongsTo(Tenant::class, 'primary_tenant_id');
+        return $this->belongsTo(Tenant::class, 'primary_tenant_id')->withTrashed();
     }
     
     public function secondaryTenant()
     {
-        return $this->belongsTo(Tenant::class, 'secondary_tenant_id');
+        return $this->belongsTo(Tenant::class, 'secondary_tenant_id')->withTrashed();
     }
     
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
 
-    // Define relationship to Room
     public function room()
     {
         return $this->belongsTo(Room::class);

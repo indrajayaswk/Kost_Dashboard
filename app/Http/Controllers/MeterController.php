@@ -24,7 +24,7 @@ class MeterController extends Controller
         // Paginate results
         $meters = $query->paginate(10);
         // Fetch tenant rooms for the modal
-        $tenantRooms = TenantRoom::with(['tenant', 'room'])->active()->get();
+        $tenantRooms = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->active()->get();
 
         // Return the view with the required data
         return view('admin2.meter.index', compact('meters', 'tenantRooms'));

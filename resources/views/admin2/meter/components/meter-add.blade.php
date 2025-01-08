@@ -24,7 +24,8 @@
                         <option value="" disabled selected>Select a tenant room</option>
                         @foreach($tenantRooms as $tenantRoom)
                             <option value="{{ $tenantRoom->id }}">
-                                {{ $tenantRoom->tenant->name ?? 'Unknown Tenant' }} - {{ $tenantRoom->room->room_number ?? 'Unknown Room' }}
+                                {{-- {{ $tenantRoom->primaryTenant->name ?? 'Unknown Tenant' }} & {{ $tenantRoom->secondaryTenant->name ?? 'none' }} -  --}}
+                                {{ $tenantRoom->room->room_number ?? 'Unknown Room' }}
                             </option>
                         @endforeach
                     </select>

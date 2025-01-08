@@ -15,14 +15,25 @@
             </div>
 
             <!-- Modal body -->
-            <form action="{{ route('tenant-room.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('tenant-room.store') }}" method="POST">
                 @csrf
                 <div class="grid gap-4 mb-4 sm:grid-cols-2">
-                    <!-- Tenant Dropdown -->
+                    <!-- Primary Tenant Dropdown -->
                     <div>
-                        <label for="tenant_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tenant</label>
-                        <select id="tenant_id" name="tenant_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required>
-                            <option value="">Select Tenant</option>
+                        <label for="primary_tenant_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Primary Tenant</label>
+                        <select id="primary_tenant_id" name="primary_tenant_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required>
+                            <option value="">Select Primary Tenant</option>
+                            @foreach ($tenants as $tenant)
+                                <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Secondary Tenant Dropdown -->
+                    <div>
+                        <label for="secondary_tenant_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Secondary Tenant (Optional)</label>
+                        <select id="secondary_tenant_id" name="secondary_tenant_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                            <option value="">Select Secondary Tenant</option>
                             @foreach ($tenants as $tenant)
                                 <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
                             @endforeach
@@ -57,14 +68,14 @@
 
                     <!-- End Date Input -->
                     <div>
-                        <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
-                        <input type="date" id="end_date" name="end_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required>
+                        <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date (Optional)</label>
+                        <input type="date" id="end_date" name="end_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                     </div>
 
                     <!-- Note Input Field -->
                     <div class="col-span-2">
                         <label for="note" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Note</label>
-                        <textarea id="note" name="note" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
+                        <textarea id="note" name="note" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required></textarea>
                     </div>
                 </div>
 

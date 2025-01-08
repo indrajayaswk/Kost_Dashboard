@@ -196,7 +196,7 @@
 {{-- include for create,edit adn delete models here, DO NOT PUT IN app.blade!z --}}
     @include('admin2.meter.components.meter-add')
     @include('admin2.meter.components.meter-edit')
-    @include('admin2.meter..meter-delete')
+    @include('admin2.meter.components.meter-delete')
 
 
 {{---------------- trouble shooting untuk error add/edit----------------- --}}

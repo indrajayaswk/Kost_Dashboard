@@ -12,38 +12,40 @@ class TenantRoomController extends Controller
     public function index()
     {
         // Eager load the relationships
-        $tenantRooms = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->get();
+        $tenantRooms = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->paginate(10);
         $rooms = Room::all();
+        $tenants = Tenant::all(); // Fetch all tenants
+    
         // Pass the data to the view
-        return view('admin2.tenant-room.index', compact('tenantRooms', 'rooms'));
+        return view('admin2.tenant-room.index', compact('tenantRooms', 'rooms', 'tenants'));
     }
     
     public function store(Request $request)
-{
-    try {
-        // Validate the incoming request
-        $data = $request->validate([
-            'primary_tenant_id' => 'required|exists:tenants,id',
-            'secondary_tenant_id' => 'nullable|exists:tenants,id|different:primary_tenant_id',
-            'room_id' => 'required|exists:rooms,id',
-            'status' => 'required|in:active,inactive',
-            'note' => 'nullable|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date', // Ensure end_date is after start_date
-        ]);
-
-        // Store the tenant-room assignment
-        TenantRoom::create($data);
-
-        return redirect()->route('tenant-room.index')->with('success', 'Tenant assigned to room successfully.');
-    } catch (\Exception $e) {
-        // Log the error
-        Log::error('Error storing tenant room: ' . $e->getMessage());
-
-        // Return with an error message
-        return redirect()->route('tenant-room.index')->with('error', 'An error occurred while assigning the tenant to the room.');
+    {
+        try {
+            // Validate the incoming request
+            $data = $request->validate([
+                'primary_tenant_id' => 'required|exists:tenants,id',
+                'secondary_tenant_id' => 'nullable|exists:tenants,id|different:primary_tenant_id',
+                'room_id' => 'required|exists:rooms,id',
+                'status' => 'required|in:active,inactive',
+                'note' => 'required|string|max:255', // Note is required
+                'start_date' => 'required|date',
+                'end_date' => 'nullable|date|after_or_equal:start_date', // End date is optional
+            ]);
+    
+            // Store the tenant-room assignment
+            TenantRoom::create($data);
+    
+            return redirect()->route('tenant-room.index')->with('success', 'Tenant assigned to room successfully.');
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error storing tenant room: ' . $e->getMessage());
+    
+            // Return with an error message
+            return redirect()->route('tenant-room.index')->with('error', 'An error occurred while assigning the tenant to the room.');
+        }
     }
-}
 
 public function show($id)
 {
