@@ -28,12 +28,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard route
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     // Penghuni (Tenant) routes
-    Route::resource('penghuni', PenghuniController::class);
+    // Route::resource('penghuni', PenghuniController::class);
 
-    //Kamar rouites
-    Route::resource('kamar', KamarController::class);
-    //Meteran routes
-    Route::resource('meteran', MeteranController::class);
+    // //Kamar rouites
+    // Route::resource('kamar', KamarController::class);
+    // //Meteran routes
+    // Route::resource('meteran', MeteranController::class);
 
 
     // Other routes
