@@ -10,13 +10,9 @@ class Meter extends Model
 {
     use HasFactory, SoftDeletes;
 
-    // The table associated with the model.
     protected $table = 'meters';
-
-    // The primary key for the model.
     protected $primaryKey = 'id';
 
-    // The attributes that are mass assignable.
     protected $fillable = [
         'tenant_room_id',
         'kwh_number',
@@ -28,47 +24,54 @@ class Meter extends Model
         'month',
     ];
 
-    // The attributes that should be mutated to dates.
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'month'];
 
-    // The relationship between Meter and TenantRoom
     public function tenantRoom()
     {
         return $this->belongsTo(TenantRoom::class, 'tenant_room_id');
     }
 
-    // Calculate total_kwh based on kwh_number and previous record
+    /**
+     * Calculate total_kwh based on the current and previous record for the same tenant_room_id.
+     */
     public function calculateTotalKwh()
     {
-        // Assuming you want to compare the current kwh_number with the previous record
+        // Find the previous meter reading for the same tenant room_id and for the same tenant
         $previousMeter = Meter::where('tenant_room_id', $this->tenant_room_id)
-                              ->latest()
+                              ->where('month', '<', $this->month)
+                              ->orderBy('month', 'desc')
                               ->first();
 
+        // If a previous record exists, calculate the difference between current and previous kwh_number
         if ($previousMeter) {
             $this->total_kwh = $this->kwh_number - $previousMeter->kwh_number;
         } else {
-            $this->total_kwh = $this->kwh_number;
+            // If no previous record is found (first input), set total_kwh to 0
+            $this->total_kwh = 0;
         }
 
-        // Make sure total_kwh doesn't go below 0
+        // Ensure total_kwh does not go below 0 (in case of error or rollback)
         $this->total_kwh = max($this->total_kwh, 0);
     }
 
-    // Calculate total_price based on total_kwh and price_per_kwh
+    /**
+     * Calculate total_price based on total_kwh and price_per_kwh.
+     */
     public function calculateTotalPrice()
     {
+        // Calculate the total price by multiplying kwh and price per kwh
         $this->total_price = $this->total_kwh * $this->price_per_kwh;
     }
 
-    // You can also trigger these methods in events or controller logic
-    // Example: Automatically calculate total_kwh and total_price before saving the model
+    /**
+     * Automatically calculate total_kwh and total_price before saving.
+     */
     public static function boot()
     {
         parent::boot();
 
         static::saving(function ($meter) {
-            // Automatically calculate total_kwh and total_price before saving
+            // Calculate total_kwh and total_price before saving the meter
             $meter->calculateTotalKwh();
             $meter->calculateTotalPrice();
         });

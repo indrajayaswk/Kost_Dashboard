@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Validator;
+
 class TenantRoom extends Model
 {
     use HasFactory, SoftDeletes;
@@ -16,13 +17,11 @@ class TenantRoom extends Model
         'room_id',
         'status',
         'start_date',
-        'end_date',     
+        'end_date',
         'note',
     ];
 
-
-
-    // Boot method to handle soft delete logic and room status update
+    // Boot method to handle soft delete logic, room status update, and cascading delete for meters
     protected static function boot()
     {
         parent::boot();
@@ -67,18 +66,16 @@ class TenantRoom extends Model
         });
     }
 
-
-
     public function primaryTenant()
     {
         return $this->belongsTo(Tenant::class, 'primary_tenant_id')->withTrashed();
     }
-    
+
     public function secondaryTenant()
     {
         return $this->belongsTo(Tenant::class, 'secondary_tenant_id')->withTrashed();
     }
-    
+
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
@@ -87,5 +84,11 @@ class TenantRoom extends Model
     public function room()
     {
         return $this->belongsTo(Room::class);
-    }   
+    }
+
+    // Add the relationship for meters
+    public function meters()
+    {
+        return $this->hasMany(Meter::class, 'tenant_room_id');
+    }
 }

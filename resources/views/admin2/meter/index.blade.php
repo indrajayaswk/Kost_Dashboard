@@ -63,7 +63,10 @@
                         <td class="px-4 py-3">{{ $meter->total_kwh }}</td>
                         <td class="px-4 py-3">{{ $meter->total_price }}</td>
                         <td class="px-4 py-3">{{ $meter->price_per_kwh }}</td>
-                        <td class="px-4 py-3">{{ $meter->month }}</td>
+                        <td class="px-4 py-3">
+                            {{-- Format the month to display only month and year --}}
+                            {{ \Carbon\Carbon::parse($meter->month)->format('m-Y') }}
+                        </td>
                         <td class="px-4 py-3">{{ $meter->created_at }}</td>
                         <td class="px-4 py-3">{{ $meter->updated_at }}</td>
                           <td class="px-4 py-3 flex items-center justify-end">

@@ -33,9 +33,9 @@
                 </button>
             </div>
         </div>
-        @foreach ($unassignedTenants as $tenant)
+        {{-- @foreach ($unassignedTenants as $tenant)
         <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
-    @endforeach
+    @endforeach --}}
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="sticky top-0 z-10 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>

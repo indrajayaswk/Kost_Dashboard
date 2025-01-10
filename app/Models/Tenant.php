@@ -8,14 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tenant extends Model
 {
-    use HasFactory, SoftDeletes; // Use the SoftDeletes trait
+    use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $table = 'tenants'; // Specify table name if it's not plural of the model name.
+    protected $table = 'tenants';
     protected $fillable = [
         'name',
         'phone',
@@ -26,33 +21,45 @@ class Tenant extends Model
         'note', 
     ];
 
-    public $timestamps = true; // This will use the 'created_at' and 'updated_at' columns automatically
+    public $timestamps = true;
 
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
     protected $dates = ['deleted_at'];
 
-
-    protected static function boot()
+    // Define relationships
+    public function tenantRooms()
     {
-        parent::boot();
-
-        static::saving(function ($tenant) {
-            // Soft delete the tenant if end_date is set
-            if (!is_null($tenant->end_date) && is_null($tenant->deleted_at)) {
-                $tenant->deleted_at = now();
-            }
-        });
-
-        static::deleting(function ($tenant) {
-            // Set end_date when soft deleting
-            if (is_null($tenant->end_date)) {
-                $tenant->end_date = now();
-                $tenant->saveQuietly();
-            }
-        });
+        return $this->hasMany(TenantRoom::class, 'primary_tenant_id'); // Adjust the relationship if necessary
     }
+
+protected static function boot()
+{
+    parent::boot();
+
+    // When a tenant is soft deleted
+    static::deleting(function ($tenant) {
+        // Set the end_date if it's not already set
+        if (is_null($tenant->end_date)) {
+            $tenant->end_date = now();
+            $tenant->saveQuietly(); // Save the change without triggering events
+        }
+
+        // Soft delete the tenant's related tenant rooms and meters
+        foreach ($tenant->tenantRooms as $tenantRoom) {
+            $tenantRoom->delete(); // This will soft delete related tenant rooms
+
+            // Soft delete related meters for each tenant room
+            foreach ($tenantRoom->meters as $meter) {
+                $meter->delete(); // This will soft delete related meters
+            }
+        }
+    });
+
+    // Automatically set the `end_date` if saving and `end_date` is null
+    static::saving(function ($tenant) {
+        if (!is_null($tenant->deleted_at) && is_null($tenant->end_date)) {
+            $tenant->end_date = now();
+        }
+    });
+}
+
 }
