@@ -33,7 +33,9 @@
                 </button>
             </div>
         </div>
-
+        @foreach ($unassignedTenants as $tenant)
+        <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
+    @endforeach
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="sticky top-0 z-10 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -55,9 +57,13 @@
                         <td class="px-4 py-4">{{ $index + 1 }}</td>
                         <td class="px-4 py-4">{{ $tenantRoom->primaryTenant->name; }}</td>
                         <td class="px-4 py-4">{{ $tenantRoom->secondaryTenant->name ?? 'N/A'; }}</td>
-                        {{-- <td class="px-4 py-4">{{ $tenantRoom->tenant->phone }}</td> --}}
+
                         <td class="px-4 py-4">{{ $tenantRoom->room->room_number }}</td>
-                        <td class="px-4 py-4">{{ ucfirst($tenantRoom->status) }}</td>
+                        <td class="px-4 py-4">
+                            <span class="{{ $tenantRoom->status === 'active' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }} px-2 py-1 rounded-full">
+                                {{ ucfirst($tenantRoom->status) }}
+                            </span>
+                        </td>
                         <td class="px-4 py-4">{{$tenantRoom->note}}</td>
                         <td class="px-4 py-4">{{$tenantRoom->start_date}}</td>
                         <td class="px-4 py-4">{{$tenantRoom->end_date}}</td>
@@ -109,17 +115,16 @@
                 @endforeach
             </tbody>
         </table>
-        {{-- @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
+
+
+    
+    <!-- Success message alert -->
+    @if(session('success'))
+        <div class="bg-green-500 text-white p-4 rounded-md mb-4">
+            {{ session('success') }}
         </div>
     @endif
     
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif --}}
         <!-- Pagination -->
         <div class="mt-4">
             {{ $tenantRooms->links() }}

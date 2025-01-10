@@ -23,7 +23,7 @@
                         <label for="primary_tenant_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Primary Tenant</label>
                         <select id="primary_tenant_id" name="primary_tenant_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required>
                             <option value="">Select Primary Tenant</option>
-                            @foreach ($tenants as $tenant)
+                            @foreach ($unassignedTenants as $tenant)
                                 <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
                             @endforeach
                         </select>
@@ -34,7 +34,7 @@
                         <label for="secondary_tenant_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Secondary Tenant (Optional)</label>
                         <select id="secondary_tenant_id" name="secondary_tenant_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                             <option value="">Select Secondary Tenant</option>
-                            @foreach ($tenants as $tenant)
+                            @foreach ($unassignedTenants as $tenant)
                                 <option value="{{ $tenant->id }}">{{ $tenant->name }}</option>
                             @endforeach
                         </select>
@@ -86,3 +86,12 @@
         </div>
     </div>
 </div>
+@if ($errors->any())
+<div class="bg-red-500 text-white p-4 rounded-md mb-4">
+    <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif

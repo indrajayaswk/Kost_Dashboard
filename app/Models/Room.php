@@ -30,4 +30,9 @@ class Room extends Model
      * @var array
      */
     protected $dates = ['deleted_at']; // Ensure deleted_at is cast as a date
+
+    public function tenantRooms()
+    {
+        return $this->hasMany(TenantRoom::class);
+    }
 }

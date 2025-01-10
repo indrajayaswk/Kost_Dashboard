@@ -23,7 +23,7 @@ class Tenant extends Model
         'dp',
         'start_date',
         'end_date',
-        'note',
+        'note', 
     ];
 
     public $timestamps = true; // This will use the 'created_at' and 'updated_at' columns automatically
@@ -33,5 +33,26 @@ class Tenant extends Model
      *
      * @var array
      */
-    protected $dates = ['deleted_at']; // Ensure deleted_at is cast as a date
+    protected $dates = ['deleted_at'];
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($tenant) {
+            // Soft delete the tenant if end_date is set
+            if (!is_null($tenant->end_date) && is_null($tenant->deleted_at)) {
+                $tenant->deleted_at = now();
+            }
+        });
+
+        static::deleting(function ($tenant) {
+            // Set end_date when soft deleting
+            if (is_null($tenant->end_date)) {
+                $tenant->end_date = now();
+                $tenant->saveQuietly();
+            }
+        });
+    }
 }

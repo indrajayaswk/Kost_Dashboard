@@ -26,8 +26,14 @@
             </label>
             <select id="primary_tenant_id-{{ $tenantRoom->id }}" name="primary_tenant_id" 
                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-                <option value="">Select Primary Tenant</option>
-                @foreach ($tenants as $tenant)
+                <!-- Add the current assigned primary tenant as an option -->
+                <option value="{{ $tenantRoom->primary_tenant_id }}" 
+                    {{ $tenantRoom->primary_tenant_id ? 'selected' : '' }}>
+                    {{ $tenantRoom->primaryTenant->name ?? 'Select Primary Tenant' }}
+                </option>
+                
+                <!-- Add the unassigned tenants -->
+                @foreach ($unassignedTenants as $tenant)
                     <option value="{{ $tenant->id }}" 
                         {{ $tenantRoom->primary_tenant_id == $tenant->id ? 'selected' : '' }}>
                         {{ $tenant->name }}
@@ -43,8 +49,22 @@
             </label>
             <select id="secondary_tenant_id-{{ $tenantRoom->id }}" name="secondary_tenant_id" 
                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-                <option value="">(None)</option>
-                @foreach ($tenants as $tenant)
+                <!-- Add the 'None' option as the first option -->
+                <option value="" 
+                    {{ $tenantRoom->secondary_tenant_id == null ? 'selected' : '' }}>
+                    (None)
+                </option>
+                
+                <!-- Add the current assigned secondary tenant as an option -->
+                @if($tenantRoom->secondary_tenant_id)
+                    <option value="{{ $tenantRoom->secondary_tenant_id }}" 
+                        {{ $tenantRoom->secondary_tenant_id == $tenantRoom->secondary_tenant_id ? 'selected' : '' }}>
+                        {{ $tenantRoom->secondaryTenant->name }}
+                    </option>
+                @endif
+
+                <!-- Add the unassigned tenants -->
+                @foreach ($unassignedTenants as $tenant)
                     <option value="{{ $tenant->id }}" 
                         {{ $tenantRoom->secondary_tenant_id == $tenant->id ? 'selected' : '' }}>
                         {{ $tenant->name }}
@@ -54,21 +74,30 @@
         </div>
 
 
-            <!-- Room -->
-            <div class="mb-4">
-                <label for="room_id-{{ $tenantRoom->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Room
-                </label>
-                <select id="room_id-{{ $tenantRoom->id }}" name="room_id" 
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-                    @foreach ($rooms as $room)
-                        <option value="{{ $room->id }}" 
-                            {{ $tenantRoom->room_id == $room->id ? 'selected' : '' }}>
-                            {{ $room->room_number }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+
+<!-- Room -->
+<div class="mb-4">
+    <label for="room_id-{{ $tenantRoom->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        Room
+    </label>
+    <select id="room_id-{{ $tenantRoom->id }}" name="room_id" 
+        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
+        
+        <!-- Show the original room (assigned before edit) -->
+        <option value="{{ $tenantRoom->room_id }}" selected>
+            {{ $tenantRoom->room->room_number }} (Original)
+        </option>
+
+        <!-- Loop through rooms that are not assigned to any active tenant -->
+        @foreach ($rooms as $room)
+            <option value="{{ $room->id }}" 
+                {{ $tenantRoom->room_id == $room->id ? 'selected' : '' }}>
+                {{ $room->room_number }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
 
             <!-- Status -->
             <div class="mb-4">
@@ -79,10 +108,9 @@
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
                     <option value="active" {{ $tenantRoom->status == 'active' ? 'selected' : '' }}>Active</option>
                     <option value="inactive" {{ $tenantRoom->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                    <!-- Add more statuses as needed -->
                 </select>
             </div>
-
+            
             <!-- Check-in Date -->
             <div class="mb-4">
                 <label for="start_date-{{ $tenantRoom->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -121,6 +149,15 @@
                     class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
                     Save Changes
                 </button>
+                @if ($errors->any())
+                <div class="bg-red-500 text-white p-4 rounded-md mb-4">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             </div>
         </form>            
     </div>

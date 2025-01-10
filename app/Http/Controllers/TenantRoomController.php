@@ -1,85 +1,100 @@
 <?php
-
 namespace App\Http\Controllers;
+use App\Http\Requests\TenantRoomRequest;
 use Illuminate\Support\Facades\Log;
 use App\Models\Tenant; 
 use App\Models\Room; 
 use App\Models\TenantRoom;
-use Illuminate\Http\Request;
 
 class TenantRoomController extends Controller
 {
     public function index()
     {
-        // Eager load the relationships
+        // Fetch all tenants who are not assigned as primary or secondary tenants in any active tenant-rooms
+        $assignedPrimaryTenantIds = TenantRoom::whereNull('deleted_at')
+            ->where(function ($query) {
+                $query->whereNotNull('primary_tenant_id');
+            })
+            ->where('status', 'active') // Ensure the status is 'active'
+            ->pluck('primary_tenant_id')
+            ->unique();
+
+        $assignedSecondaryTenantIds = TenantRoom::whereNull('deleted_at')
+            ->where(function ($query) {
+                $query->whereNotNull('secondary_tenant_id');
+            })
+            ->where('status', 'active') // Ensure the status is 'active'
+            ->pluck('secondary_tenant_id')
+            ->unique();
+        
+        // Combine the arrays and ensure only unique IDs remain
+        $combinedTenantIds = $assignedPrimaryTenantIds->merge($assignedSecondaryTenantIds)->unique();
+
+        // Fetch unassigned tenants for new assignments (not assigned to any active room)
+        $unassignedTenants = Tenant::whereNotIn('id', $combinedTenantIds)->get();
+// ----------------------------------------------------only data of tenants that is not assigned----------------------------------------------------------------
+        // Fetch all tenants (including those already assigned) for editing purposes
+        $allTenants = Tenant::all();
+
+    // Fetch rooms excluding those assigned to active tenants
+    $rooms = Room::whereDoesntHave('tenantRooms', function ($query) {
+        $query->whereNull('deleted_at')
+              ->where('status', 'active');
+    })->get();
+
+        // Fetch tenant-room relationships with related data
         $tenantRooms = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->paginate(10);
-        $rooms = Room::all();
-        $tenants = Tenant::all(); // Fetch all tenants
-    
-        // Pass the data to the view
-        return view('admin2.tenant-room.index', compact('tenantRooms', 'rooms', 'tenants'));
+
+        // Pass both assigned and unassigned tenants to the view
+        return view('admin2.tenant-room.index', compact('tenantRooms', 'rooms', 'allTenants', 'unassignedTenants'));
     }
-    
-    public function store(Request $request)
+
+
+
+    public function store(TenantRoomRequest $request)
     {
-        try {
-            // Validate the incoming request
-            $data = $request->validate([
-                'primary_tenant_id' => 'required|exists:tenants,id',
-                'secondary_tenant_id' => 'nullable|exists:tenants,id|different:primary_tenant_id',
-                'room_id' => 'required|exists:rooms,id',
-                'status' => 'required|in:active,inactive',
-                'note' => 'required|string|max:255', // Note is required
-                'start_date' => 'required|date',
-                'end_date' => 'nullable|date|after_or_equal:start_date', // End date is optional
-            ]);
+        $data = $request->validated(); // Automatically runs the validation rules
     
-            // Store the tenant-room assignment
-            TenantRoom::create($data);
-    
-            return redirect()->route('tenant-room.index')->with('success', 'Tenant assigned to room successfully.');
-        } catch (\Exception $e) {
-            // Log the error
-            Log::error('Error storing tenant room: ' . $e->getMessage());
-    
-            // Return with an error message
-            return redirect()->route('tenant-room.index')->with('error', 'An error occurred while assigning the tenant to the room.');
+        $room = \App\Models\Room::findOrFail($data['room_id']);
+        if ($room->room_status === 'occupied') {
+            return back()->withErrors(['room_id' => 'This room is already occupied.']);
         }
+    
+        $room->update(['room_status' => 'occupied']);
+    
+        \App\Models\TenantRoom::create($data);
+    
+        return redirect()->route('tenant-room.index')->with('success', 'Tenant Room created successfully.');
     }
-
-public function show($id)
-{
-    $tenantRoom = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->findOrFail($id);
-    return view('tenant-rooms.show', compact('tenantRoom'));
-}
-
-
-public function update(Request $request, TenantRoom $tenantRoom)
-{
-    try {
-        // Validate the incoming request
-        $data = $request->validate([
-            'primary_tenant_id' => 'required|exists:tenants,id',
-            'secondary_tenant_id' => 'nullable|exists:tenants,id|different:primary_tenant_id',
-            'room_id' => 'required|exists:rooms,id',
-            'status' => 'required|in:active,inactive',
-            'note' => 'nullable|string|max:255',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date', // Ensure end_date is after start_date
-        ]);
-        // dd($data);
-        // Update the tenant-room record
+    
+    public function update(TenantRoomRequest $request, $id)
+    {
+        $data = $request->validated();
+    
+        $tenantRoom = \App\Models\TenantRoom::findOrFail($id);
+    
+        if ($tenantRoom->room_id !== $data['room_id']) {
+            $oldRoom = \App\Models\Room::findOrFail($tenantRoom->room_id);
+            $oldRoom->update(['room_status' => 'available']);
+    
+            $newRoom = \App\Models\Room::findOrFail($data['room_id']);
+            if ($newRoom->room_status === 'occupied') {
+                return back()->withErrors(['room_id' => 'This room is already occupied.']);
+            }
+    
+            $newRoom->update(['room_status' => 'occupied']);
+        }
+    
         $tenantRoom->update($data);
-
-        return redirect()->route('tenant-room.index')->with('success', 'Tenant-room record updated successfully.');
-    } catch (\Exception $e) {
-        // Log the error
-        Log::error('Error updating tenant room: ' . $e->getMessage());
-
-        // Return with an error message
-        return redirect()->route('tenant-room.index')->with('error', 'An error occurred while updating the tenant-room record.');
+    
+        return redirect()->route('tenant-room.index')->with('success', 'Tenant Room updated successfully.');
     }
-}
+
+    public function show($id)
+    {
+        $tenantRoom = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->findOrFail($id);
+        return view('admin2.tenant-room.show', compact('tenantRoom'));
+    }
 
     public function destroy(TenantRoom $tenantRoom)
     {

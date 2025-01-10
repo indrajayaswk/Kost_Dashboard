@@ -75,14 +75,6 @@ class TenantController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('admin.tenant.create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -178,31 +170,22 @@ class TenantController extends Controller
 
     $tenant = Tenant::findOrFail($id);
 
-    // Update fields
-    $tenant->name = $request->name;
-    $tenant->phone = $request->phone;
-    $tenant->start_date = $request->start_date;
-    $tenant->end_date = $request->end_date;
-    $tenant->dp = $request->dp;
-    $tenant->note = $request->note;
+    $tenant->fill($request->all());
 
     if ($request->hasFile('ktp')) {
-        // Save the new file securely in storage/app/ktp_images
         $file = $request->file('ktp');
         $path = $file->store('ktp_images');
-    
+
         if ($path) {
-            // Update the database with the new file path
             $tenant->ktp = $path;
         } else {
             return back()->with('error', 'Failed to upload KTP image.');
         }
     }
-    
+
     $tenant->save();
-    
+
     return redirect()->route('tenant.index')->with('success', 'Tenant updated successfully!');
-    
 }
 
     /**
@@ -210,13 +193,10 @@ class TenantController extends Controller
      */
     public function destroy(Tenant $tenant)
     {
-        // Perform a soft delete
-        $tenant->delete();
+        $tenant->delete();//automaticly set end_date when soft deleted
 
         
         // $tenant->forceDelete();  ------>perform Permenant delete
-
-        // Redirect back with a success message
         return redirect()->route('tenant.index')->with('success', 'Tenant soft-deleted successfully!');
     }
 
