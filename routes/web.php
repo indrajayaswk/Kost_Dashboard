@@ -19,6 +19,7 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantRoomController;
 use App\Models\Meter;
 use App\Models\TenantRoom;
+use App\Http\Controllers\MidtransController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -64,8 +65,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter',MeterController::class);
     Route::resource('tenant-room',TenantRoomController::class);
     
-    //-----------------------------------testing----------------------------------
-    
+    //-----------------------------------test implement midtraans----------------------------------
+
+    Route::get('/midtrans', [MidtransController::class, 'index'])->name('midtrans.index');
+    Route::post('/midtrans/create-payment', [MidtransController::class, 'createPayment'])->name('midtrans.create-payment');
+
 });
 
 require __DIR__.'/auth.php';
