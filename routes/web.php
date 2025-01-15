@@ -14,62 +14,61 @@ use App\Http\Controllers\KTPImageController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
-// ---------------------------------------------------------------
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantRoomController;
 use App\Models\Meter;
 use App\Models\TenantRoom;
 use App\Http\Controllers\MidtransController;
 
+
+
+
+use App\Http\Controllers\MidtransNotificationController;
+
+
+
+
+// Default route to login page
 Route::get('/', function () {
     return view('auth.login');
 });
 
+// Group of routes protected by auth and verified middleware
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard route
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-    // Penghuni (Tenant) routes
-    // Route::resource('penghuni', PenghuniController::class);
 
-    // //Kamar rouites
-    // Route::resource('kamar', KamarController::class);
-    // //Meteran routes
-    // Route::resource('meteran', MeteranController::class);
-
-
-    // Other routes
+    // Profile management routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Other management routes
-    // Route::get('/kamar', [KamarController::class, 'index'])->name('kamar.index');
+    // Statistics and complaints routes
     Route::get('/statistik', [StatistikController::class, 'index'])->name('statistik.index');
-    // Route::get('/meteran', [MeteranController::class, 'index'])->name('meteran.index');
     Route::get('/komplain', [KomplainController::class, 'index'])->name('komplain.index');
-    // Route::get('/broadcast', [BroadcastController::class, 'index'])->name('broadcast.index');
 
-    // broadcast routes
-    //INI ROUTE RESOURCE broadcast cuman buat 2 index dan store aja karena broadcast perlu 2 itu aja untuk sekarang
+    // Broadcast management
     Route::resource('broadcast', BroadcastController::class)->only(['index', 'store']);
     Route::post('/broadcast/send', [BroadcastController::class, 'send'])->name('broadcast.send');
-    //----------------middleware untuk cek dan akses foto ktp di private--------------------------
+
+    // KTP images access route with middleware for authentication
     Route::middleware(['auth'])->get('/ktp/images/{filename}', [KTPImageController::class, 'show'])->name('ktp.image.show');
 
-
-
-
-    // ---------------------------------------------------------ADMIN2-------------------------------------------
-    Route::resource('tenant',TenantController::class);
+    // Admin routes for managing tenants, rooms, meters, and tenant rooms
+    Route::resource('tenant', TenantController::class);
     Route::resource('room', RoomController::class);
-    Route::resource('meter',MeterController::class);
-    Route::resource('tenant-room',TenantRoomController::class);
-    
-    //-----------------------------------test implement midtraans----------------------------------
+    Route::resource('meter', MeterController::class);
+    Route::resource('tenant-room', TenantRoomController::class);
 
+    // Midtrans integration routes
     Route::get('/midtrans', [MidtransController::class, 'index'])->name('midtrans.index');
-    Route::post('/midtrans/create-payment', [MidtransController::class, 'createPayment'])->name('midtrans.create-payment');
+    // Route::post('/midtrans/create-payment', [MidtransController::class, 'createPayment'])->name('midtrans.create-payment');
+    Route::get('/midtrans/meter', [MidtransController::class, 'showMeter'])->name('midtrans.show-meter');
+    Route::post('/midtrans/create-invoice', [MidtransController::class, 'createInvoice'])->name('midtrans.create-invoice');
+    
+    
 
 });
+
 
 require __DIR__.'/auth.php';
