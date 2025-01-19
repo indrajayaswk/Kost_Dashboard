@@ -124,4 +124,13 @@ class RoomController extends Controller
 
         return redirect()->route('room.index')->with('success', 'Room restored successfully!');
     }
+
+
+// ini dipake untuk kamar kosong unregistered menu di bot
+    public function availableRooms()
+    {
+        $rooms = Room::where('room_status', 'available')->get(['id', 'room_number']);
+        return response()->json($rooms);
+    }
+
 }

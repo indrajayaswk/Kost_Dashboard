@@ -116,6 +116,9 @@ class MidtransController extends Controller
         }
     }
     
+
+
+    //----------------comment and uncomment when finished conencting new url in midtrans-------------
     public function handleWebhook(Request $request)
     {
         Log::info('Webhook Received:');
@@ -140,7 +143,7 @@ class MidtransController extends Controller
                 Log::error('Invalid order_id format: ' . $orderId);
                 return response()->json(['status' => 'error', 'message' => 'Invalid order_id format'], 400);
             }
-            ///the seperation of the meter ID is goten from data in transaction_id! it is decripted and got it
+            ///need to learn wether it is gotten from transaction_id and got the order_id or something, either way need to make a security signature key for security in the future!
             $roomNumber = $parts[1];
             $year=$parts[2];
             $month = $parts[3];
@@ -176,19 +179,25 @@ class MidtransController extends Controller
     }
     
     
-
-//     public function handleWebhook(Request $request)
-// {
-//     Log::info('Webhook hit!');
-
-//     return response()->json(['status' => 'Webhook received']);
-// }
-public function handleNotification(Request $request)
-{
-    // Handle the notification here
-    // For example, you can log or process the request data
-    Log::info($request->all());
+// ------------------------------------Comment and uncomment---------------------------------------
+// ---------------------when connecting to midtrans for saving new url to midtrans------------------
     
-    return response()->json(['status' => 'success']);
-}
-}
+//     public function handleWebhook(Request $request)
+    // {
+    //     Log::info('Webhook hit!');
+
+    //     return response()->json(['status' => 'Webhook received']);
+    // }
+
+
+
+
+    public function handleNotification(Request $request)
+    {
+        // Handle the notification here
+        // For example, you can log or process the request data
+        Log::info($request->all());
+        
+        return response()->json(['status' => 'success']);
+    }
+    }

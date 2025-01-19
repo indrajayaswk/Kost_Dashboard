@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\tenant;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +17,7 @@ class BroadcastController extends Controller
     public function index()
     {
         // Retrieve all tenants
-        $tenants = tenant::all();
+        $tenants = Tenant::all();
 
         // Log the retrieved tenants for debugging
         Log::info('Retrieved tenants for broadcasting.', [
@@ -38,7 +38,7 @@ class BroadcastController extends Controller
         // Validate input data
         $validatedData = $request->validate([
             'tenant_ids' => 'required|array|min:1', // Ensure at least one tenant is selected
-            'tenant_ids.*' => 'exists:tenants,id', // ini 'tenant_ids.*' => 'exists:tenants,id' artinya tenant_ids data ada atau tidak di tabel tenants data id
+            'tenant_ids.*' => 'exists:tenants,id', // Ensure tenant_ids exists in the tenants table
             'message' => 'required|string',
         ]);
 
@@ -48,7 +48,7 @@ class BroadcastController extends Controller
         // Collect recipients
         $recipients = [];
         foreach ($request->tenant_ids as $tenantId) {
-            $tenant = tenant::find($tenantId);
+            $tenant = Tenant::find($tenantId);
 
             if ($tenant) {
                 $tenantPhone = preg_replace('/\D/', '', $tenant->phone);
@@ -69,7 +69,7 @@ class BroadcastController extends Controller
             return redirect()->back()->with('error', 'No valid tenants selected.');
         }
 
-        // Prepare the payload
+        // Prepare the payload for the bot server
         $payload = [
             'message' => $request->message,
             'recipients' => $recipients,
@@ -78,7 +78,7 @@ class BroadcastController extends Controller
         // Log the payload for debugging
         Log::info('Sending broadcast request.', $payload);
 
-        // Send the broadcast request
+        // Send the broadcast request to the bot server
         try {
             $response = Http::post('http://localhost:3000/broadcast', $payload);
 
@@ -103,4 +103,3 @@ class BroadcastController extends Controller
         return redirect()->back()->with('success', 'Broadcast message sent successfully!');
     }
 }
- 

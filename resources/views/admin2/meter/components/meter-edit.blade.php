@@ -21,6 +21,9 @@
             @csrf
             @method('PUT')
         
+            <!-- Tenant Room ID (hidden) -->
+            <input type="hidden" name="tenant_room_id" value="{{ $meter_update->tenantRoom ? $meter_update->tenantRoom->id : '' }}">
+        
             <!-- Meter Reading -->
             <div class="mb-4">
                 <label for="meters-{{ $meter_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -29,7 +32,7 @@
                 <input type="number" id="meters-{{ $meter_update->id }}" name="kwh_number" value="{{ $meter_update->kwh_number }}" 
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
             </div>
-            
+        
             <!-- Room number (data from related TenantRoom and Room model) -->
             <div class="mb-4">
                 <label for="room_number-{{ $meter_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -70,7 +73,8 @@
                     Save Changes
                 </button>
             </div>
-          </form>            
+        </form>
+                    
       </div>
   </div>
   @endforeach
