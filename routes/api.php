@@ -3,10 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BotController;
+use App\Http\Controllers\BotMenuController;
 use App\Http\Controllers\BroadcastController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\MenuController;
+
+
 
 // Check tenant route
 Route::post('/check-tenant', [BotController::class, 'checkTenant']);
@@ -31,5 +35,12 @@ Route::post('/whatsapp-message', [BotController::class, 'handleMessage']);
 
 
 
-//-----------------------------------testing
+//-----------------------------------testing-----saved in git
 Route::get('/rooms/available', [RoomController::class, 'availableRooms']);
+
+
+///-------------------------testing new bot design/cleaned version
+Route::post('/menu-options', [BotMenuController::class, 'getMenuOptions']);
+
+
+
