@@ -32,7 +32,7 @@ class TenantRoomController extends Controller
 
         // Fetch unassigned tenants for new assignments (not assigned to any active room)
         $unassignedTenants = Tenant::whereNotIn('id', $combinedTenantIds)->get();
-// ----------------------------------------------------only data of tenants that is not assigned----------------------------------------------------------------
+// -----------------only data of tenants that is not assigned-------
         // Fetch all tenants (including those already assigned) for editing purposes
         $allTenants = Tenant::all();
 

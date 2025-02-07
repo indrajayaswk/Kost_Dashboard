@@ -16,6 +16,10 @@ class Room extends Model
         'room_status',
         'room_price',
     ];
+    protected $casts = [
+        'room_images' => 'array', // Ensure images are cast as an array
+    ];
+    
 
     public $timestamps = true; // This will use the 'created_at' and 'updated_at' columns automatically
 
@@ -62,6 +66,8 @@ class Room extends Model
             }
         });
 
+
+        //FIX THIS, WHEN CODE UNCOMMENTED IN HERE, WHEN DATA ARE EDITED AND SAVED IN TENANT_ROOM, IT WILL SOFT DELETE AND RUN THIS SOMEHOW! THE METERS GOT SOFTDELETED TO WHEN UPDATED! MAYBE NOT NEEDED? OR THIS IS LOGIC FOR WHEN STATUS ARE EDITED TO INACTIVE SERVE LIKE A SOFT DELETE TO ALL?
         // When a Room is being saved (edited), check for status change
         static::saving(function ($room) {
             // Check if the status is changing from 'occupied' to 'available'
@@ -70,14 +76,14 @@ class Room extends Model
                 if ($room->tenantRooms) {
                     foreach ($room->tenantRooms as $tenantRoom) {
                         // Soft delete related TenantRooms and set their end_date
-                        $tenantRoom->deleteQuietly(); // Soft delete related TenantRoom
-                        $tenantRoom->status = 'inactive'; // Set the status to "inactive"
-                        $tenantRoom->end_date = now(); // Set the end_date for the TenantRoom
+                        // $tenantRoom->deleteQuietly(); // Soft delete related TenantRoom
+                        // $tenantRoom->status = 'inactive'; // Set the status to "inactive"
+                        // $tenantRoom->end_date = now(); // Set the end_date for the TenantRoom
                         $tenantRoom->saveQuietly(); // Save the changes quietly
 
                         // Soft delete related Meters based on tenant_room_id foreign key
                         $tenantRoom->meters()->each(function ($meter) {
-                            $meter->deleteQuietly(); // Soft delete related Meter records
+                            // $meter->deleteQuietly(); // Soft delete related Meter records
                         });
                     }
                 }

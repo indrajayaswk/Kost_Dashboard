@@ -3,7 +3,10 @@
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">
             Meter Data for Room: {{ $tenantRoom->room->room_number }} - {{ $tenantRoom->primaryTenant->name }}
         </h2>
-
+        <button onclick="refreshMeterData()" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+            Refresh Data
+        </button>
+        
         @if ($meters->isEmpty())
             <p class="text-gray-600">No meter data found for this room.</p>
         @else
@@ -126,3 +129,48 @@
         background-color: #f7fafc;
     }
 </style>
+
+<script>
+    function refreshMeterData() {
+        const tenantRoomId = "{{ $tenantRoom->id }}";
+        
+        fetch(`/meters/${tenantRoomId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let tableBody = document.querySelector("tbody");
+                    tableBody.innerHTML = ""; // Clear the table
+
+                    data.meters.forEach(meter => {
+                        let row = `<tr class="hover:bg-gray-100">
+                            <td class="py-2 px-4 border-b">${meter.month}</td>
+                            <td class="py-2 px-4 border-b">${meter.total_kwh}</td>
+                            <td class="py-2 px-4 border-b">${meter.total_price}</td>
+                            <td class="py-2 px-4 border-b">${meter.price_per_kwh}</td>
+                            <td class="py-2 px-4 border-b">
+                                ${meter.pay_proof ? `<a href="${meter.pay_proof}" target="_blank" class="text-blue-500 hover:underline">Pay Now</a>` : '<span class="text-gray-500">Not Available</span>'}
+                            </td>
+                            <td class="py-2 px-4 border-b">
+                                <span class="px-2 py-1 rounded text-white ${meter.status === 'paid' ? 'bg-green-500' : 'bg-red-500'}">
+                                    ${meter.status.charAt(0).toUpperCase() + meter.status.slice(1)}
+                                </span>
+                            </td>
+                            <td class="py-2 px-4 border-b">
+                                <form action="{{ route('midtrans.create-invoice') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="tenant_room_id" value="${tenantRoomId}">
+                                    <input type="hidden" name="meter_id" value="${meter.id}">
+                                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Create Invoice</button>
+                                </form>
+                            </td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else {
+                    console.error("Failed to fetch meters:", data.error);
+                }
+            })
+            .catch(error => console.error("Error fetching meter data:", error));
+    }
+</script>
+

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 
 class RoomController extends Controller
 {
@@ -53,21 +55,35 @@ class RoomController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        // Validate the input
-        $validated = $request->validate([
-            'room_number' => 'required|string|max:255',
-            'room_type' => 'required|string|max:255',
-            'room_status' => 'required|in:available,occupied',
-            'room_price' => 'required|numeric|min:0',
-        ]);
-    
-        // Create a new room record
-        Room::create($validated);
+{
+    // Validate the input
+    $validated = $request->validate([
+        'room_number' => 'required|string|max:255',
+        'room_type' => 'required|string|max:255',
+        'room_status' => 'required|in:available,occupied',
+        'room_price' => 'required|numeric|min:0',
+        'room_images.*' => 'image|mimes:jpeg,png,jpg,gif',
+    ]);
 
-        // Redirect back with success message
-        return redirect()->route('room.index')->with('success', 'Room successfully added.');
+    $imagePaths = [];
+    if ($request->hasFile('room_images')) {
+        foreach ($request->file('room_images') as $image) {
+            $imagePaths[] = $image->store('room_images', 'public');
+        }
     }
+
+    // Create a new room record
+    $room = Room::create($validated);
+
+    // Store the image paths in the room's room_images column (assuming the column exists)
+    if (!empty($imagePaths)) {
+        $room->room_images = $imagePaths;
+        $room->save();
+    }
+
+    // Redirect back with success message
+    return redirect()->route('room.index')->with('success', 'Room successfully added.');
+}
 
     /**
      * Display the specified resource.
@@ -90,19 +106,40 @@ class RoomController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'room_number' => 'required|string|max:255|unique:rooms,room_number,' . $id,
-            'room_type' => 'required|string|max:255',
-            'room_status' => 'required|in:available,occupied',
-            'room_price' => 'required|numeric|min:0',
-        ]);
+{
+    $request->validate([
+        'room_number' => 'required|string|max:255|unique:rooms,room_number,' . $id,
+        'room_type' => 'required|string|max:255',
+        'room_status' => 'required|in:available,occupied',
+        'room_price' => 'required|numeric|min:0',
+        'room_images.*' => 'image|mimes:jpeg,png,jpg,gif',
+    ]);
 
-        $room = Room::findOrFail($id);
-        $room->update($request->only(['room_number', 'room_type', 'room_status', 'room_price']));
+    $room = Room::findOrFail($id);
 
-        return redirect()->route('room.index')->with('success', 'Room updated successfully!');
+    // Handle the images upload
+    if ($request->hasFile('room_images')) {
+        // Delete old images if necessary (assuming you store image paths in database)
+        foreach ($room->room_images as $oldImage) {
+            Storage::delete('public/' . $oldImage);
+        }
+
+        // Upload new images
+        $imagePaths = [];
+        foreach ($request->file('room_images') as $image) {
+            $imagePaths[] = $image->store('room_images', 'public');
+        }
+
+        // Store the image paths in the room's room_images column
+        $room->room_images = $imagePaths;
     }
+
+    // Update the other room fields
+    $room->update($request->only(['room_number', 'room_type', 'room_status', 'room_price']));
+
+    return redirect()->route('room.index')->with('success', 'Room updated successfully!');
+}
+
 
     /**
      * Remove the specified resource from storage.

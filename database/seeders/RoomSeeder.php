@@ -18,56 +18,64 @@ class RoomSeeder extends Seeder
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 2000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'A2',
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 3000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'A3',
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 3000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'A4',
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 3000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'A5',
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 3000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'A6',
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 3000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'A7',
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 3000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'A8',
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 3000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'A9',
                 'room_type' => 'Lantai Atas',
                 'room_status' => 'available',
                 'room_price' => 3000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
-
 
 
             [
@@ -75,54 +83,63 @@ class RoomSeeder extends Seeder
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'B2',
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'B3',
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'B4',
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'B5',
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'B6',
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'B7',
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'B8',
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'B9',
                 'room_type' => 'Lantai Bawah',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
 
 
@@ -131,53 +148,81 @@ class RoomSeeder extends Seeder
                 'room_type' => 'Kost Selatan',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'S2',
                 'room_type' => 'Kost Selatan',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'S3',
                 'room_type' => 'Kost Selatan',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'S4',
                 'room_type' => 'Kost Selatan',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'S5',
                 'room_type' => 'Kost Selatan',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'S6',
                 'room_type' => 'Kost Selatan',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'S7',
                 'room_type' => 'Kost Selatan',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
             [
                 'room_number' => 'S8',
                 'room_type' => 'Kost Selatan',
                 'room_status' => 'available',
                 'room_price' => 5000000,
+                'room_images' => $this->getRandomRoomImages(),
             ],
         ];
 
         foreach ($rooms as $room) {
             Room::create($room);
         }
+    }
+
+    /**
+     * Get random room images.
+     *
+     * @return array
+     */
+    private function getRandomRoomImages(): array
+    {
+        $images = [
+            'room_images/9Ld2REmnrfJsHWUl7nIal2yphclVDWaEd2bjPas1.png',
+            'room_images/BW9SWWRxzlBH4NQ6ZPTq9rZDBmC1YQXVTP0w1Moz.png',
+            'room_images/NCrBgeXeUvtzsJqukzBPe1Qw8ZYFIqmDrxrNJWsK.jpg',
+        ];
+
+        return [
+            $images[array_rand($images)],
+            $images[array_rand($images)],
+            $images[array_rand($images)],
+        ];
     }
 }

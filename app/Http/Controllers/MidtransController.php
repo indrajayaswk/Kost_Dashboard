@@ -182,11 +182,11 @@ class MidtransController extends Controller
 // ------------------------------------Comment and uncomment---------------------------------------
 // ---------------------when connecting to midtrans for saving new url to midtrans------------------
     
-//     public function handleWebhook(Request $request)
+    // public function handleWebhook(Request $request)
     // {
     //     Log::info('Webhook hit!');
 
-    //     return response()->json(['status' => 'Webhook received']);
+    //     return response()->json(['status' => '200']);
     // }
 
 
@@ -200,4 +200,26 @@ class MidtransController extends Controller
         
         return response()->json(['status' => 'success']);
     }
+
+
+
+
+
+    public function fetchMeters($tenant_room_id)
+{
+    try {
+        $meters = \App\Models\Meter::where('tenant_room_id', $tenant_room_id)->get();
+
+        return response()->json([
+            'success' => true,
+            'meters' => $meters
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+}
+
     }

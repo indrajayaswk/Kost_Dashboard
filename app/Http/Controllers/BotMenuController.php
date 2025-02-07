@@ -7,21 +7,17 @@ use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-
-use Illuminate\Support\Facades\Session;
-
-
 class BotMenuController extends Controller
 {
-
-
-
-    
     public function getMenuOptions(Request $request)
     {
-        
-        // Log incoming request for troubleshooting
-        Log::info('Received data from bot:', $request->all());
+        // Log the incoming request details
+        Log::info('Laravel received a request from bot:', [
+            'phone' => $request->input('phone'),
+            'user_input' => $request->input('user_input', ''),
+            'clear_state' => $request->input('clear_state', false),
+            'state' => $request->input('state', 'not_registered'),
+        ]);
 
         $phone = $request->input('phone');
         $userInput = $request->input('user_input', '');
@@ -30,7 +26,7 @@ class BotMenuController extends Controller
 
         // Clear the state if requested
         if ($userInput == 99) {
-            Log::info('State cleared for phone:', ['phone' => $phone]);
+            Log::info('Laravel clearing state for phone:', ['phone' => $phone]);
             return response()->json([
                 'user_state' => null,
                 'response_message' => 'State has been cleared.',
@@ -42,14 +38,19 @@ class BotMenuController extends Controller
         $tenant = Tenant::where('phone', $phone)->first();
         $isRegistered = $tenant ? true : false;
 
-        // Set the state based on user type
+        // Set the state based on registration status
         $state = $isRegistered ? 'registered_main_menu' : 'not_registered_main_menu';
+        Log::info('Laravel determined state:', [
+            'phone' => $phone,
+            'is_registered' => $isRegistered,
+            'current_state' => $state,
+        ]);
 
-        // Dynamic room availability menu
+        // Generate room availability menu dynamically
         $availableRooms = Room::where('room_status', 'available')->get();
         $roomMenu = $this->generateRoomMenu($availableRooms);
 
-        // Define menus for not registered users
+        // Define menus
         $menus = [
             'not_registered_main_menu' => [
                 'response_message' => "Welcome to Kost Cobra 10 & 11! How can we assist you?\n1. Check Available Rooms\n2. Kost Rules\n3. Payment Information\n4. Contact Admin",
@@ -74,8 +75,6 @@ class BotMenuController extends Controller
                     ],
                 ],
             ],
-
-            // Define menus for registered users
             'registered_main_menu' => [
                 'response_message' => "Hello, registered user! How can we assist you?\n1. Check Available Rooms\n2. View Invoice\n3. Contact Admin",
                 'options' => ['1', '2', '3'],
@@ -95,27 +94,21 @@ class BotMenuController extends Controller
                     ],
                 ],
             ],
-
-            // Room availability menu (shared)
             'room_availability' => [
                 'response_message' => $roomMenu['message'],
                 'options' => $roomMenu['options'],
                 'responses' => $roomMenu['responses'],
             ],
-
-            // Room details state
-            'room_details' => [
-                'response_message' => 'You selected a room, here are the details:',
-                'options' => [],
-                'responses' => [],
-            ],
         ];
 
-        // Fetch the menu based on the current state
+        // Fetch the appropriate menu
         $menu = $menus[$state] ?? null;
 
         if (!$menu) {
-            Log::warning('Invalid state detected.', ['state' => $state, 'phone' => $phone]);
+            Log::warning('Laravel detected an invalid state:', [
+                'state' => $state,
+                'phone' => $phone,
+            ]);
             return response()->json([
                 'user_state' => $state,
                 'response_message' => 'Invalid state or input. Returning to the main menu.',
@@ -126,38 +119,13 @@ class BotMenuController extends Controller
         // Handle user input
         $response = $menu['responses'][$userInput] ?? null;
 
-        // If the state is room_details and the user input exists
-        if ($state === 'room_availability' && $userInput) {
-            // Check if userInput is a valid number
-            $userInput = (int) $userInput;
-
-            // Fetch the room data based on user input (room number)
-            $selectedRoom = $roomMenu['data'][$userInput] ?? null;
-
-            if ($selectedRoom) {
-                Log::info('Room selected:', ['room_number' => $selectedRoom['room_number']]);
-
-                return response()->json([
-                    'user_state' => 'room_details',
-                    'response_message' => "You selected room {$selectedRoom['room_number']} with a price of {$selectedRoom['room_price']}",
-                    'data' => [
-                        'room_number' => $selectedRoom['room_number'],
-                        'room_price' => $selectedRoom['room_price'],
-                    ],
-                ]);
-            } else {
-                Log::info('Invalid room selection.');
-                return response()->json([
-                    'user_state' => 'room_availability',
-                    'response_message' => "Invalid room selection. Please select a valid room.",
-                    'options' => $menu['options'],
-                ]);
-            }
-        }
-
-        // If no response or invalid input
         if (!$response) {
-            Log::info('Invalid input received.', ['input' => $userInput, 'phone' => $phone]);
+            Log::info('Laravel received invalid input from bot:', [
+                'phone' => $phone,
+                'state' => $state,
+                'user_input' => $userInput,
+                'valid_options' => $menu['options'], // Log the valid options
+            ]);
             return response()->json([
                 'user_state' => $state,
                 'response_message' => "Invalid input. Please choose an option:\n" . $menu['response_message'],
@@ -165,14 +133,15 @@ class BotMenuController extends Controller
             ]);
         }
 
-        // Log outgoing response, including data
-        Log::info('Sending response to bot:', [
-            'user_state' => $response['next_state'],
+
+        Log::info('Laravel sending response to bot:', [
+            'phone' => $phone,
+            'current_state' => $state,
+            'next_state' => $response['next_state'],
             'response_message' => $response['response'],
-            'data' => $response['data'] ?? null,  // Log the data if it exists
+            'data' => $response['data'] ?? null,
         ]);
 
-        // Return the response with data
         return response()->json([
             'user_state' => $response['next_state'],
             'response_message' => $response['response'],
@@ -189,6 +158,7 @@ class BotMenuController extends Controller
         $data = [];
 
         if ($availableRooms->isEmpty()) {
+            Log::info('Laravel found no available rooms.');
             return [
                 'message' => 'No rooms are currently available.',
                 'options' => ['0'],
@@ -219,13 +189,15 @@ class BotMenuController extends Controller
             ];
         }
 
+        Log::info('Laravel generated room menu:', ['menu' => $roomMenu]);
+        Log::info('Laravel generated responses for room menu:', ['responses' => $responses]);
+
         return [
             'message' => $roomMenu,
             'options' => $options,
             'responses' => $responses,
             'data' => $data,
         ];
+        
     }
-
 }
-

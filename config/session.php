@@ -32,7 +32,7 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 120),
+    'lifetime' => env('SESSION_LIFETIME', 1),
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
@@ -213,5 +213,25 @@ return [
     */
 
     'partitioned' => env('SESSION_PARTITIONED_COOKIE', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Whatsapp Bot Session
+    |--------------------------------------------------------------------------
+    |
+    | Setup for botssession to the database
+    |
+    */
+
+    // 'bot_sessions' => [
+    //     'driver' => 'file',  // Change to 'file' for file-based sessions
+    //     'files' => storage_path('framework/sessions/bot_sessions'),  // Path to store session files
+    //     'lifetime' => 30,  // Set session lifetime (in minutes)
+    //     'expire_on_close' => false,  // Optionally, control session expiration when the browser is closed
+    // ],
+
+
+
+
 
 ];

@@ -24,7 +24,7 @@ class BroadcastController extends Controller
             'total_tenants' => $tenants->count()
         ]);
 
-        return view('admin.broadcast.index', compact('tenants'));
+        return view('admin2.broadcast.index', compact('tenants'));
     }
 
     /**

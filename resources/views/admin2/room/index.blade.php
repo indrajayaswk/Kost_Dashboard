@@ -62,6 +62,7 @@
                               <th scope="col" class="px-4 py-4">Room Type</th>
                               <th scope="col" class="px-4 py-4">Price</th>
                               <th scope="col" class="px-4 py-4">Room Status</th>
+                              <th scope="col" class="px-4 py-4">Images</th>
                               <th scope="col" class="px-4 py-4 text-right">
                                   <span class="sr-only">Actions</span>
                               </th>
@@ -79,6 +80,18 @@
                                 <td class="px-4 py-3">{{ $room->room_type }}</td>
                                 <td class="px-4 py-3">{{ $room->room_price }}</td>
                                 <td class="px-4 py-3">{{ $room->room_status }}</td>
+                                <td class="px-4 py-3">
+                                    @if (!empty($room->room_images))
+                                    @foreach ($room->room_images as $image)
+                                        <img src="{{ Storage::url($image) }}" class="w-16 h-16 rounded-lg" alt="Room Image">
+                                    @endforeach
+                                @else
+                                    <span class="text-gray-400">No Images</span>
+                                @endif
+
+                                
+
+                                </td>
                                 <td class="px-4 py-3 flex items-center justify-end">
                                     <!-- Action Button -->
                                     <button id="action-dropdown-room{{ $index }}" 

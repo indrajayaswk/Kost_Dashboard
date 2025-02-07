@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\statistik;
 use Illuminate\Http\Request;
 
-class StatistikController extends Controller
+class StatisticsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // return view('admin.statistk.index');
+        return view('admin2.statistics.index');
     }
 
     /**
@@ -34,7 +33,7 @@ class StatistikController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(statistik $statistik)
+    public function show(string $id)
     {
         //
     }
@@ -42,7 +41,7 @@ class StatistikController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(statistik $statistik)
+    public function edit(string $id)
     {
         //
     }
@@ -50,7 +49,7 @@ class StatistikController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, statistik $statistik)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -58,7 +57,7 @@ class StatistikController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(statistik $statistik)
+    public function destroy(string $id)
     {
         //
     }

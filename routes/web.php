@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BroadcastController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\KomplainController;
@@ -24,9 +25,7 @@ use App\Http\Controllers\MidtransController;
 
 
 use App\Http\Controllers\MidtransNotificationController;
-
-
-
+use App\Http\Controllers\StatisticsController;
 
 // Default route to login page
 Route::get('/', function () {
@@ -54,11 +53,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // KTP images access route with middleware for authentication
     Route::middleware(['auth'])->get('/ktp/images/{filename}', [KTPImageController::class, 'show'])->name('ktp.image.show');
 
-    // Admin routes for managing tenants, rooms, meters, and tenant rooms
+    // Admin routes for managing tenants, rooms, meters, and tenant rooms complaints
     Route::resource('tenant', TenantController::class);
     Route::resource('room', RoomController::class);
+    Route::put('/rooms/{room}', [RoomController::class, 'update'])->name('room.update');
+
     Route::resource('meter', MeterController::class);
     Route::resource('tenant-room', TenantRoomController::class);
+    Route::resource('complaint',ComplaintController::class);
+    Route::resource('statistics',StatisticsController::class);
+
+    Route::patch('complaints/{complaint}/complete', [ComplaintController::class, 'complete'])->name('complaints.complete');
 
     // Midtrans integration routes
     Route::get('/midtrans', [MidtransController::class, 'index'])->name('midtrans.index');
@@ -66,7 +71,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/midtrans/meter', [MidtransController::class, 'showMeter'])->name('midtrans.show-meter');
     Route::post('/midtrans/create-invoice', [MidtransController::class, 'createInvoice'])->name('midtrans.create-invoice');
     
-    
+
+    // ---------------------------
+    Route::get('/meters/{tenant_room_id}', [MidtransController::class, 'fetchMeters'])->name('meters.fetch');
+
 
 });
 
