@@ -22,8 +22,8 @@ class TenantSeeder extends Seeder
             Tenant::create([
                 'name' => $faker->name, // Random name
                 'phone' => '6281239366793', // Use the same phone number for all tenants
-                'ktp' => $faker->unique()->numberBetween(1000000000000000, 9999999999999999), // Random KTP number
-                'dp' => $faker->numberBetween(500000, 5000000), // Random down payment (dp)
+                'ktp' => 'private/ktp_images/PlaceHolder.svg', // Store the relative path to the placeholder image
+                'dp' => $faker->numberBetween(200000, 250000), // Random down payment (dp)
                 'start_date' => now(), // Random start date (current date)
                 'end_date' => null, // Leave end_date as null
                 'note' => $faker->sentence, // Random note (sentence)

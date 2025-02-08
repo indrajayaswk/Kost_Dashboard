@@ -17,33 +17,51 @@ class UssdBotController extends Controller
      * Handle incoming bot requests
      */
     public function handleMessage(Request $request)
-    {
+{
+    try {
         // Validate input data
         $validated = $request->validate([
             'phone' => 'required|string',
             'message' => 'required|string',
         ]);
 
-        $phone = $validated['phone'];
+        $phone = trim($validated['phone']);
         $message = trim($validated['message']);
+
+        // Log incoming request (useful for debugging)
+        Log::info("Received message from {$phone}: {$message}");
 
         // Check if the phone number exists in the tenants table
         $tenant = Tenant::where('phone', $phone)->first();
 
-        // Process menu logic based on whether the user is registered or not
-        if ($tenant) {
-            // Registered user
-            $responseMessage = $this->processMenu($phone, $message, 'registered');
-        } else {
-            // Not registered user
-            $responseMessage = $this->processMenu($phone, $message, 'not_registered');
+        // Determine user state and process the menu
+        $response = $this->processMenu($phone, $message, $tenant ? 'registered' : 'not_registered');
+
+        // If response contains images, return both message & images separately
+        if (is_array($response) && isset($response['message']) && isset($response['images'])) {
+            return response()->json([
+                'status' => 'success',
+                'message' => $response['message'],
+                'images' => $response['images'], // Send images separately
+            ]);
         }
 
+        // If it's just a message, return normally
         return response()->json([
             'status' => 'success',
-            'message' => $responseMessage,
+            'message' => $response,
         ]);
+
+    } catch (\Exception $e) {
+        Log::error("Error in handleMessage: " . $e->getMessage());
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'An error occurred while processing the request.',
+        ], 500);
     }
+}
+
 
     /**
      * Process menu logic based on user type
@@ -159,7 +177,7 @@ class UssdBotController extends Controller
         $roomList .= "Contoh: A7\n";
         $roomList.="Kamar - Harga Kamar/bulan\n";
         foreach ($availableRooms as $room) {
-            $roomList .= "*{$room->room_number}* - Rp." . $room->room_price . "/Bulan"."\n"; // Assuming room_number and room_price are columns
+            $roomList .= "*{$room->room_number}* - Rp." . $room->room_price . "/Bulan"."\n"; 
         }
         $roomList.=$this->BackMainMenu_0();
         
@@ -183,22 +201,35 @@ class UssdBotController extends Controller
      * Get room details based on the selected room number.
      */
     private function getRoomDetails($roomNumber)
-    {
-        // Fetch the room from the database based on the room number
-        $room = Room::where('room_number', $roomNumber)->first();
-        if (!$room) {
-            return "Room not found. Please try again.\n\nPress 0 to go back to the main menu.";
-        }
+{
+    $room = Room::where('room_number', $roomNumber)->first();
 
-        // For now, display a placeholder message for room details
-        $roomDetails = "{$room->room_number} - This is the detailed room data!\n";
-        $roomDetails .= "Price: \$" . $room->room_price . "\n"; // You can add more details here later
-        $roomDetails .= "Room Type: " . $room->room_type . "\n"; // You can add more details here later
-        $roomDetails .= "Type different room for there information";
-        $roomDetails .= $this->BackMainMenu_0();
-
-        return $roomDetails;
+    if (!$room) {
+        return [
+            "message" => "Room not found. Please try again.\n\nPress 0 to go back to the main menu.",
+            "images" => [],
+        ];
     }
+
+    $roomDetails = "{$room->room_number} - This is the detailed room data!\n";
+    $roomDetails .= "Price: Rp." . number_format($room->room_price, 0, ',', '.') . "/Bulan\n";
+    $roomDetails .= "Room Type: " . $room->room_type . "\n";
+    $roomDetails .= "Type a different room number for more information.\n";
+    $roomDetails .= $this->BackMainMenu_0();
+
+    // Convert image paths to public URLs
+    $images = [];
+    if (!empty($room->room_images) && is_array($room->room_images)) {
+        foreach ($room->room_images as $image) {
+            $images[] = asset('storage/' . $image); // Generates a full URL
+        }
+    }
+
+    return [
+        "message" => $roomDetails,
+        "images" => $images,
+    ];
+}
 
 
     public function getRules() {
@@ -253,11 +284,18 @@ class UssdBotController extends Controller
             return "Tenant not found. Please try again.";
         }
 
-        // Fetch the rooms associated with this tenant
-        $tenantRooms = $tenant->tenantRooms;
+        // Fetch rooms where the tenant is either a primary or secondary tenant
+        $tenantRooms = TenantRoom::where('primary_tenant_id', $tenant->id)
+            ->orWhere('secondary_tenant_id', $tenant->id)
+            ->with(['room', 'meters' => function ($query) {
+                $query->latest()->limit(1); // Get the latest meter record
+            }])
+            ->get();
 
         if ($tenantRooms->isEmpty()) {
-            return "Anda Belum terdaftar ke kamar!.\n Please type 0 to exit this menu";
+            $message = "Anda belum terdaftar ke kamar!.\n";
+            $message .= $this->BackMainMenu_0();
+            return $message;
         }
 
         // Generate room information for the tenant
@@ -266,20 +304,21 @@ class UssdBotController extends Controller
             $room = $tenantRoom->room;
             $roomInfo .= "Room: {$room->room_number}\n";
             $roomInfo .= "Room Type: {$room->room_type}\n";
-            $roomInfo .= "Price: \${$room->room_price}\n";
+            $roomInfo .= "Price: Rp" . number_format($room->room_price, 0, ',', '.') . "\n";
 
-            // Fetch meter details (electricity usage, price, etc.)
-            $meter = $tenantRoom->meters()->latest()->first(); // Get the latest meter record
+            // Fetch meter details (latest electricity usage, price, etc.)
+            $meter = $tenantRoom->meters->first(); // Since we limited it to 1 in the query
             if ($meter) {
                 $roomInfo .= "Total KWH: {$meter->total_kwh}\n";
-                $roomInfo .= "Total Price: \${$meter->total_price}\n";
+                $roomInfo .= "Total Price: Rp" . number_format($meter->total_price, 0, ',', '.') . "\n";
             } else {
                 $roomInfo .= "No meter data available.\n";
             }
 
-            $roomInfo .= $this->BackMainMenu_0();;
+            $roomInfo .= "\n"; // Separate rooms by a line break
         }
 
+        $roomInfo .= $this->BackMainMenu_0();
         return $roomInfo;
     }
 
@@ -383,7 +422,9 @@ public function getRegisteredInvoice($phone)
         ->get();
 
     if ($tenantRooms->isEmpty()) {
-        return "You do not have any rooms associated with your account.";
+        $message="Anda belum didaftarkan ke kamar!.\n";
+        $message.=$this->BackMainMenu_0();
+        return $message;
     }
 
     // Generate room invoice details
