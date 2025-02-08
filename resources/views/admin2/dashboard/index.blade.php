@@ -1,95 +1,78 @@
 <x-app-layout>
-    <section class="categories-section">
-        <div class="categories-header">
-            <div class="header-content">
-                <p class="header-title">Categories that might interest you</p>
-                <a href="#" class="see-all-categories-btn" role="button">See all categories</a>
+    <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6">Good morning, James!</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <!-- Card 1 -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center">
+              <i data-lucide="credit-card" class="w-6 h-6 text-blue-600"></i>
+              <button class="text-gray-400">
+                <i data-lucide="more-vertical"></i>
+              </button>
             </div>
+            <h2 class="text-2xl font-bold mt-4">$143,624</h2>
+            <p class="text-gray-500">Your bank balance</p>
+          </div>
+      
+          <!-- Card 2 -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center">
+              <i data-lucide="clock" class="w-6 h-6 text-blue-600"></i>
+              <button class="text-gray-400">
+                <i data-lucide="more-vertical"></i>
+              </button>
+            </div>
+            <h2 class="text-2xl font-bold mt-4">7</h2>
+            <p class="text-gray-500">Employees working today</p>
+          </div>
+      
+          <!-- Card 3 -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center">
+              <i data-lucide="dollar-sign" class="w-6 h-6 text-blue-600"></i>
+              <button class="text-gray-400">
+                <i data-lucide="more-vertical"></i>
+              </button>
+            </div>
+            <h2 class="text-2xl font-bold mt-4">$3,287.49</h2>
+            <p class="text-gray-500">This week's card spending</p>
+          </div>
+      
+          <!-- Card 4 -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center">
+              <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+              <button class="text-gray-400">
+                <i data-lucide="more-vertical"></i>
+              </button>
+            </div>
+            <h2 class="text-2xl font-bold mt-4">54</h2>
+            <p class="text-green-500 text-sm font-medium">+18.7%</p>
+            <p class="text-gray-500">New clients</p>
+          </div>
         </div>
-
-        <div class="categories-list">
-            <!-- Category: Laptops & Computers -->
-            <a href="#" class="category-item">
-                <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 16H5a1 1 0 0 1-1-1V5c0-.6.4-1 1-1h14c.6 0 1 .4 1 1v1M9 12H4m8 8V9h8v11h-8Zm0 0H9m8-4a1 1 0 1 0-2 0 1 1 0 0 0 2 0Z"></path>
-                </svg>
-                <p class="category-title">Laptops &amp; Computers</p>
-            </a>
-
-            <!-- Category: TV -->
-            <a href="#" class="category-item">
-                <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v5m-3 0h6M4 11h16M5 15h14c.6 0 1-.4 1-1V5c0-.6-.4-1-1-1H5a1 1 0 0 0-1 1v9c0 .6.4 1 1 1Z"></path>
-                </svg>
-                <p class="category-title">TV</p>
-            </a>
-
-            <!-- Category: Tablets -->
-            <a href="#" class="category-item">
-                <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 18h2M5.9 3H18c.5 0 .9.4.9 1v16c0 .6-.4 1-.9 1H6c-.5 0-.9-.4-.9-1V4c0-.6.4-1 .9-1Z"></path>
-                </svg>
-                <p class="category-title">Tablets</p>
-            </a>
+      
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <!-- Card 5 -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold mb-4">Revenue</h2>
+            <div class="w-full h-40 bg-gray-100 rounded-lg"></div>
+            <p class="text-gray-500 mt-4 text-sm">Last 7 days VS prior week</p>
+          </div>
+      
+          <!-- Card 6 -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold mb-4">Invoices overdue</h2>
+            <div class="flex justify-between items-center">
+              <h2 class="text-4xl font-bold text-red-600">6</h2>
+              <p class="text-red-500 text-sm font-medium">+2.7%</p>
+            </div>
+          </div>
         </div>
-    </section>
+      </div>
+      
+      <script>
+        lucide.createIcons();
+      </script>
+      
 </x-app-layout>
-
-<style>
-    .categories-section {
-        padding: 2rem;
-    }
-
-    .categories-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .header-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-
-    .see-all-categories-btn {
-        text-decoration: none;
-        color: #007bff;
-        font-weight: bold;
-        transition: color 0.3s;
-    }
-
-    .see-all-categories-btn:hover {
-        color: #0056b3;
-    }
-
-    .categories-list {
-        display: flex;
-        gap: 1.5rem;
-    }
-
-    .category-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-decoration: none;
-        color: #000;
-        transition: transform 0.3s;
-    }
-
-    .category-item:hover {
-        transform: scale(1.05);
-    }
-
-    .category-icon {
-        width: 48px;
-        height: 48px;
-        margin-bottom: 0.5rem;
-        color: #6c757d;
-    }
-
-    .category-title {
-        font-size: 1rem;
-        text-align: center;
-    }
-</style>

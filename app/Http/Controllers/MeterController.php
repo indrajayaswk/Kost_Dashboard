@@ -14,21 +14,46 @@ class MeterController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Meter::query();
+        $query = Meter::query()->with(['tenantRoom.room']);
 
-        // Add filters if necessary (uncomment and customize)
-        // if ($request->has('meters') && $request->meters != '') {
-        //     $query->where('meters', '>=', $request->meters);
-        // }
+        // Apply search filtering
+        if ($request->filled('search') && $request->filled('filter_by')) {
+            $search = $request->search;
+            $filterBy = $request->filter_by;
+
+            if ($filterBy == 'room_number') {
+                $query->whereHas('tenantRoom.room', function ($q) use ($search) {
+                    $q->where('room_number', 'LIKE', "%{$search}%");
+                });
+            } elseif ($filterBy == 'kwh_number') {
+                $query->where('kwh_number', 'LIKE', "%{$search}%");
+            } elseif ($filterBy == 'month') {
+                $query->where('month', 'LIKE', "%{$search}%");
+            } elseif ($filterBy == 'total_kwh') {
+                $query->where('total_kwh', '>=', (float) $search);
+            }
+        }
 
         // Paginate results
         $meters = $query->paginate(10);
+
         // Fetch tenant rooms for the modal
         $tenantRooms = TenantRoom::with(['primaryTenant', 'secondaryTenant', 'room'])->active()->get();
 
-        // Return the view with the required data
+        // Fetch previous KWH for each meter efficiently
+        foreach ($meters as $meter) {
+            $previousMeter = Meter::where('tenant_room_id', $meter->tenant_room_id)
+                ->where('month', '<', $meter->month)
+                ->orderBy('month', 'desc')
+                ->first();
+
+            $meter->previous_kwh = $previousMeter ? $previousMeter->kwh_number : 'N/A';
+        }
+
         return view('admin2.meter.index', compact('meters', 'tenantRooms'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -140,4 +165,24 @@ class MeterController extends Controller
 
         return redirect()->route('meter.index')->with('success', 'Meter restored successfully!');
     }
+
+    public function bulkStore(Request $request)
+{
+    // Validate the input
+    $validatedData = $request->validate([
+        'meters' => 'required|array',
+        'meters.*.tenant_room_id' => 'required|exists:tenant_rooms,id',
+        'meters.*.kwh_number' => 'required|integer|min:0',
+        'meters.*.price_per_kwh' => 'required|numeric|min:0',
+        'meters.*.month' => 'required|date',
+    ]);
+
+    // Loop through each meter data and insert into the database
+    foreach ($validatedData['meters'] as $meterData) {
+        Meter::create($meterData);
+    }
+
+    return redirect()->route('meter.index')->with('success', 'Meters successfully added in bulk.');
+}
+
 }

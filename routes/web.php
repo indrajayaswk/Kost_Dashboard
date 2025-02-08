@@ -74,7 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ---------------------------
     Route::get('/meters/{tenant_room_id}', [MidtransController::class, 'fetchMeters'])->name('meters.fetch');
-
+    Route::post('/meters/bulk-store', [MeterController::class, 'bulkStore'])->name('meter.bulk_store');
 
 });
 
