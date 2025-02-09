@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TenantRoom; 
+use App\Models\Tenant;
+use App\Models\Room;
+use App\Models\Complaint;
+use App\Models\Meter;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -11,8 +17,52 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('admin2.Dashboard.index');
+        $activeTenantCount = $this->getActiveTenantCount();
+        $availableRoomCount = $this->getAvailableRoomCount();
+        $pendingComplaintCount = $this->getPendingComplaintCount();
+        $latestMonthYear = $this->getLatestMonthYear();
+
+
+        // $recentPayments = Payment::with('tenant', 'room')->latest()->limit(5)->get();
+
+        return view('admin2.Dashboard.index', compact('activeTenantCount', 'availableRoomCount', 'pendingComplaintCount', 'latestMonthYear'));
     }
+
+    /**
+     * Get the number of tenants that are not soft deleted.
+     */
+    private function getActiveTenantCount()
+    {
+        return Tenant::whereNull('deleted_at')->count();
+    }
+
+    /**
+     * Get the number of rooms with status 'available'.
+     */
+    private function getAvailableRoomCount()
+    {
+        return Room::where('room_status', 'available')->count();
+    }
+
+    /**
+     * Get the number of complaints with status 'pending'.
+     */
+    private function getPendingComplaintCount()
+    {
+        return Complaint::where('status', 'pending')->count();
+    }
+
+    /**
+     * Get the most recent month from the meter table and format it.
+     */
+    private function getLatestMonthYear()
+    {
+        $latestMeterMonth = Meter::orderBy('month', 'desc')->first(['month']);
+        return $latestMeterMonth ? Carbon::parse($latestMeterMonth->month)->format('F Y') : null;
+    }
+    
+    
+
 
     /**
      * Show the form for adding a new dashboard entry.

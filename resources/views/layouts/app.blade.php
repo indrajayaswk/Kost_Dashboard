@@ -17,36 +17,17 @@
 
 </head>
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
-{{-- All CRUD components can be included here or inside the body --}}
-{{-- INI DITARUK INCLUDENYA DIDALEM BODY/INDEX FILE --}}
-{{-- ini include dibawah ini sudah tidak dipakai lagi-}}
-{{-- @include('admin.dashboard.dashboard_add')
-@include('admin.dashboard.dashboard_update')
-@include('admin.dashboard.dashboard_read')
-@include('admin.dashboard.dashboard_delete')
-
-@include('admin.penghuni.penghuni-add')
-@include('admin.penghuni.penghuni-update')
-
-@include('admin.kamar.kamar-add')
-@include('admin.kamar.kamar-update') --}}
-
-
-
-
-
 {{-- ------------------------ End of CRUD includes ------------------------ --}}
 
 <body class="font-sans antialiased ">
-    {{-- background abu abu, kalau ada yang rusak, uncomment ini
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex">  --}}
+    {{-- background abu abu, kalau ada yang rusak, uncomment ini --}}
+    {{-- <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex">  --}}
         
         <!-- Sidebar -->
         <x-sidebar2 /> 
 
         <!-- Main Content -->
-        <div class="flex-1">
+        <div class="flex-auto">
             @include('layouts.navigation2')
 
             <!-- Page Heading -->
