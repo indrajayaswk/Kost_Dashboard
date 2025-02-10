@@ -115,7 +115,7 @@ class UssdBotController extends Controller
         // Handle menu navigation based on the user type (registered or not)
         if ($currentState === 'main' && isset($menus[$userType][$message])) {
             // Update the user state in the cache
-            Cache::put($cacheKey, $message, 120); // Cache expires after 120 seconds
+            Cache::put($cacheKey, $message, 300); // Cache expires after 300 seconds
             return $menus[$userType][$message];
         }
         // Check for room details only for registered users in state '4' and non-registered users in state '1'
@@ -164,7 +164,7 @@ class UssdBotController extends Controller
      */
     private function getAvailableRooms()
     {
-        // Fetch available rooms from the rooms table (assuming `room_status` is a column in the rooms table)
+        // Fetch available rooms from the rooms table
         $availableRooms = Room::where('room_status', 'available')->get();
 
         if ($availableRooms->isEmpty()) {
@@ -174,28 +174,37 @@ class UssdBotController extends Controller
         // Generate the list of available rooms with room numbers for selection
         $roomList = "Available Rooms:";
         $roomList .= "\nPilih Kamar Untuk Melihat Data Lebih Detail.\n";
-        $roomList .= "Contoh: A7\n";
-        $roomList.="Kamar - Harga Kamar/bulan\n";
+        $roomList .= "*Contoh: A7*\n";
+        $roomList .= "Kamar - Harga Kamar/bulan\n";
+
         foreach ($availableRooms as $room) {
-            $roomList .= "*{$room->room_number}* - Rp." . $room->room_price . "/Bulan"."\n"; 
+            // Format the price to Indonesian Rupiah format
+            $formattedPrice = number_format($room->room_price, 0, ',', '.');
+
+            $roomList .= "*{$room->room_number}* - Rp {$formattedPrice}/Bulan\n"; 
         }
-        $roomList.=$this->BackMainMenu_0();
-        
+
+        $roomList .= $this->BackMainMenu_0();
 
         return $roomList;
     }
+
 
     /**
      * Check if the room choice is valid.
      */
     private function isValidRoomChoice($message)
     {
-        // Fetch available room numbers from the database
-        $availableRoomNumbers = Room::where('room_status', 'available')->pluck('room_number')->toArray();
+        // Fetch available room numbers and convert them to lowercase
+        $availableRoomNumbers = Room::where('room_status', 'available')
+            ->pluck('room_number')
+            ->map(fn($room) => strtolower($room))
+            ->toArray();
 
-        // Check if the message is a valid room number
-        return in_array($message, $availableRoomNumbers);
+        // Convert the input message to lowercase before checking
+        return in_array(strtolower($message), $availableRoomNumbers);
     }
+
 
     /**
      * Get room details based on the selected room number.
