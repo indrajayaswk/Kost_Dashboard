@@ -13,7 +13,7 @@
                         <option value="">Filter By</option>
                         <option value="room_number" {{ request('filter_by') == 'room_number' ? 'selected' : '' }}>Room Number</option>
                         <option value="kwh_number" {{ request('filter_by') == 'kwh_number' ? 'selected' : '' }}>KWH Number</option>
-                        <option value="month" {{ request('filter_by') == 'month' ? 'selected' : '' }}>Month</option>
+                        <option value="meter_month" {{ request('filter_by') == 'meter_month' ? 'selected' : '' }}>Month</option>
                         <option value="total_kwh" {{ request('filter_by') == 'total_kwh' ? 'selected' : '' }}>Total KWH</option>
                     </select>
                 
@@ -75,7 +75,7 @@
                         <td class="px-4 py-3">{{ $meter->total_kwh }}</td>
                         <td class="px-4 py-3">{{ $meter->total_price }}</td>
                         <td class="px-4 py-3">{{ $meter->price_per_kwh }}</td>
-                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($meter->month)->format('m-Y') }}</td>
+                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($meter->meter_month)->format('m-Y') }}</td>
                         <td class="px-4 py-3">{{ $meter->created_at }}</td>
                         <td class="px-4 py-3">{{ $meter->updated_at }}</td>
                         <td class="px-4 py-3 flex items-center justify-end">

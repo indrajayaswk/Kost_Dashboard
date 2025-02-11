@@ -1,8 +1,20 @@
 <x-app-layout>
-  
-    <main class="p-4   h-auto pt-20">
-      <h1>statik index admin2</h1>
-      
-      
-    </main>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Dashboard</div>
+
+                    <div class="container">
+                        <h1>{{ $chart->options['chart_title'] }}</h1>
+                        {!! $chart->renderHtml() !!}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {!! $chart->renderChartJsLibrary() !!}
+    {!! $chart->renderJs() !!}
 </x-app-layout>

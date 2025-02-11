@@ -21,16 +21,21 @@ class Meter extends Model
         'price_per_kwh',
         'status',
         'pay_proof',
-        'month',
+        'meter_month',
     ];
 
-    protected $dates = ['created_at', 'updated_at', 'deleted_at', 'month'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at', 'meter_month'];
 
     public function tenantRoom()
     {
         return $this->belongsTo(TenantRoom::class, 'tenant_room_id');
     }
 
+    // this is accesorry when i tried to change the column name of month in meter table to meter_month, tred to use this so i dont need to change all of the code one by one but idk, it didnt work so i change it one by one but WARNING! might some paart is still broken
+    // public function getMonthAttribute()
+    // {
+    //     return $this->meter_month;
+    // }
     /**
      * Calculate total_kwh based on the current and previous record for the same tenant_room_id.
      */
@@ -38,8 +43,8 @@ class Meter extends Model
     {
         // Find the previous meter reading for the same tenant room_id and for the same tenant
         $previousMeter = Meter::where('tenant_room_id', $this->tenant_room_id)
-                              ->where('month', '<', $this->month)
-                              ->orderBy('month', 'desc')
+                              ->where('meter_month', '<', $this->meter_month)
+                              ->orderBy('meter_month', 'desc')
                               ->first();
 
         // If a previous record exists, calculate the difference between current and previous kwh_number

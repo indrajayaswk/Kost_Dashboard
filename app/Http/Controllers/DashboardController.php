@@ -57,8 +57,8 @@ class DashboardController extends Controller
      */
     private function getLatestMonthYear()
     {
-        $latestMeterMonth = Meter::orderBy('month', 'desc')->first(['month']);
-        return $latestMeterMonth ? Carbon::parse($latestMeterMonth->month)->format('F Y') : null;
+        $latestMeterMonth = Meter::orderBy('meter_month', 'desc')->first(['meter_month']);
+        return $latestMeterMonth ? Carbon::parse($latestMeterMonth->meter_month)->format('F Y') : null;
     }
     
     

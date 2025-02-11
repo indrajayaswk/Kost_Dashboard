@@ -67,7 +67,7 @@ class MidtransController extends Controller
             // Prepare the payment parameters
             $params = [
                 'transaction_details' => [
-                    'order_id' => 'ORDER-' . $room->room_number . '-' . $meter->month . '-' . $meter->id,
+                    'order_id' => 'ORDER-' . $room->room_number . '-' . $meter->meter_month . '-' . $meter->id,
                     'gross_amount' => $room->room_price + $meter->total_price,
                 ],
                 'customer_details' => [
@@ -146,7 +146,7 @@ class MidtransController extends Controller
             ///need to learn wether it is gotten from transaction_id and got the order_id or something, either way need to make a security signature key for security in the future!
             $roomNumber = $parts[1];
             $year=$parts[2];
-            $month = $parts[3];
+            $meter_month = $parts[3];
             $day=$parts[4];
             $meterId = (int) $parts[5];  // Cast the meterId to an integer to match the bigInt type
     

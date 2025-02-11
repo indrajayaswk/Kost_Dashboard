@@ -46,7 +46,7 @@
                                 <input type="text" name="meters[{{ $index }}][kwh_number]" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" required>
                             </td>
                             <input type="hidden" name="meters[{{ $index }}][price_per_kwh]" class="price-input">
-                            <input type="hidden" name="meters[{{ $index }}][month]" class="month-input">
+                            <input type="hidden" name="meters[{{ $index }}][meter_month]" class="month-input">
                         </tr>
                         @endforeach
                     </tbody>

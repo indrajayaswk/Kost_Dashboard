@@ -56,7 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin routes for managing tenants, rooms, meters, and tenant rooms complaints
     Route::resource('tenant', TenantController::class);
     Route::resource('room', RoomController::class);
-    Route::put('/rooms/{room}', [RoomController::class, 'update'])->name('room.update');
+    // Route::put('/rooms/{room}', [RoomController::class, 'update'])->name('room.update');
 
     Route::resource('meter', MeterController::class);
     Route::resource('tenant-room', TenantRoomController::class);

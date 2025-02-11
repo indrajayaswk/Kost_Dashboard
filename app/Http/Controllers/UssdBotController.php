@@ -426,7 +426,7 @@ public function getRegisteredInvoice($phone)
         ->orWhere('secondary_tenant_id', $tenant->id)
         ->with(['room', 'meters' => function ($query) {
             // Fetch meters within the last 12 months
-            $query->where('month', '>=', now()->subYear())->orderBy('month', 'desc');
+            $query->where('meter_month', '>=', now()->subYear())->orderBy('meter_month', 'desc');
         }])
         ->get();
 
@@ -449,7 +449,7 @@ public function getRegisteredInvoice($phone)
         // Fetch meter records
         if ($tenantRoom->meters->isNotEmpty()) {
             foreach ($tenantRoom->meters as $meter) {
-                $roomInvoice .= "- Billing Month: " . date('F Y', strtotime($meter->month)) . "\n";
+                $roomInvoice .= "- Billing Month: " . date('F Y', strtotime($meter->meter_month)) . "\n";
                 $roomInvoice .= "- Total KWH: {$meter->total_kwh}\n";
                 $roomInvoice .= "- Price per KWH: Rp" . number_format($meter->price_per_kwh, 0, ',', '.') . "\n";
                 $roomInvoice .= "- Total Electricity Cost: Rp" . number_format($meter->total_price, 0, ',', '.') . "\n";

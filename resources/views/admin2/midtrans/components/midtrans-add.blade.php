@@ -26,7 +26,7 @@
                     <tbody>
                         @foreach ($meters as $meter)
                             <tr class="hover:bg-gray-100">
-                                <td class="py-2 px-4 border-b">{{ $meter->month }}</td>
+                                <td class="py-2 px-4 border-b">{{ $meter->meter_month }}</td>
                                 <td class="py-2 px-4 border-b">{{ $meter->total_kwh }}</td>
                                 <td class="py-2 px-4 border-b">{{ $meter->total_price }}</td>
                                 <td class="py-2 px-4 border-b">{{ $meter->price_per_kwh }}</td>

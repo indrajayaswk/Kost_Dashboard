@@ -57,7 +57,7 @@
                 <label for="month-{{ $meter_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Month
                 </label>
-                <input type="date" id="month-{{ $meter_update->id }}" name="month" value="{{ $meter_update->month }}" 
+                <input type="date" id="month-{{ $meter_update->id }}" name="meter_month" value="{{ $meter_update->meter_month }}" 
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
             </div>
         

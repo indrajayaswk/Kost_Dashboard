@@ -2,7 +2,7 @@
   <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 p-4 grid-flow-row">
       <!-- Active Tenants -->
       <a href="{{ route('tenant.index') }}">
-        <x-dashboard-card title="Active Tenants" subtitle="{{ $activeTenantCount }}">
+        <x-dashboard-card title="Active Tenants" subtitle="{{ $activeTenantCount }} Tenants">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" />
           </svg>
@@ -11,7 +11,7 @@
 
       <!-- Available Room -->
       <a href="{{route('room.index')}}">
-        <x-dashboard-card title="Available Room" subtitle="{{$availableRoomCount}}">
+        <x-dashboard-card title="Available Room" subtitle="{{$availableRoomCount}} Rooms">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-6m0 6V3m0 18a9 9 0 1 0 0-18 9 9 0 0 0 0 18z" />
             </svg>
@@ -72,9 +72,43 @@
         </x-dashboard-card>
       </a>
   </div>
-  <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 p-4 grid-flow-row">
-<h1>table</h1>
-  </div>
+  <!-- New Table Blocks -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+    <div class="bg-white shadow-md rounded-lg p-4 w-full" style="height: 500px;">
+        <h2 class="text-lg font-semibold mb-2">Table Block 1</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 border">Header 1</th>
+                        <th class="px-4 py-2 border">Header 2</th>
+                        <th class="px-4 py-2 border">Header 3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-4 w-full" style="height: 500px;">
+        <h2 class="text-lg font-semibold mb-2">Table Block 2</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 border">Header 1</th>
+                        <th class="px-4 py-2 border">Header 2</th>
+                        <th class="px-4 py-2 border">Header 3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 </x-app-layout>

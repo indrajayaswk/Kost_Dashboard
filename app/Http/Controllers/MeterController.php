@@ -27,8 +27,8 @@ class MeterController extends Controller
                 });
             } elseif ($filterBy == 'kwh_number') {
                 $query->where('kwh_number', 'LIKE', "%{$search}%");
-            } elseif ($filterBy == 'month') {
-                $query->where('month', 'LIKE', "%{$search}%");
+            } elseif ($filterBy == 'meter_month') {
+                $query->where('meter_month', 'LIKE', "%{$search}%");
             } elseif ($filterBy == 'total_kwh') {
                 $query->where('total_kwh', '>=', (float) $search);
             }
@@ -43,8 +43,8 @@ class MeterController extends Controller
         // Fetch previous KWH for each meter efficiently
         foreach ($meters as $meter) {
             $previousMeter = Meter::where('tenant_room_id', $meter->tenant_room_id)
-                ->where('month', '<', $meter->month)
-                ->orderBy('month', 'desc')
+                ->where('meter_month', '<', $meter->meter_month)
+                ->orderBy('meter_month', 'desc')
                 ->first();
 
             $meter->previous_kwh = $previousMeter ? $previousMeter->kwh_number : 'N/A';
@@ -77,7 +77,7 @@ class MeterController extends Controller
         $validated = $request->validate([
             'tenant_room_id' => 'required|exists:tenant_rooms,id', // Ensure tenant_room_id exists in tenant_rooms table
             'kwh_number' => 'required|integer|min:0',
-            'month' => 'required|date',
+            'meter_month' => 'required|date',
             'price_per_kwh' => 'required|numeric|min:0',
         ]);
         
@@ -126,14 +126,14 @@ class MeterController extends Controller
         $request->validate([
             'tenant_room_id' => 'required|exists:tenant_rooms,id', // Ensure tenant_room_id exists
             'kwh_number' => 'required|integer|min:0',
-            'month' => 'required|date',
+            'meter_month' => 'required|date',
             'price_per_kwh' => 'required|numeric|min:0',
         ]);
 
             $meter = Meter::findOrFail($id);
 
             // Update the meter with validated data
-            $meter->update($request->only(['tenant_room_id', 'kwh_number', 'month', 'price_per_kwh']));
+            $meter->update($request->only(['tenant_room_id', 'kwh_number', 'meter_month', 'price_per_kwh']));
 
             // Recalculate total_kwh and total_price after updating
             $meter->calculateTotalKwh();
@@ -174,7 +174,7 @@ class MeterController extends Controller
         'meters.*.tenant_room_id' => 'required|exists:tenant_rooms,id',
         'meters.*.kwh_number' => 'required|integer|min:0',
         'meters.*.price_per_kwh' => 'required|numeric|min:0',
-        'meters.*.month' => 'required|date',
+        'meters.*.meter_month' => 'required|date',
     ]);
 
     // Loop through each meter data and insert into the database
