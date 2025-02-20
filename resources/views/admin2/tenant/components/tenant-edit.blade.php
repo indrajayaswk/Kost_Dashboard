@@ -64,9 +64,10 @@
                 <label for="start_date-{{ $tenant_update->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Check-in Date
                 </label>
-                <input type="date" id="start_date-{{ $tenant_update->id }}" name="start_date" value="{{ $tenant_update->start_date }}" 
+                <input type="date" id="start_date-{{ $tenant_update->id }}" name="start_date" 
+                    value="{{ \Carbon\Carbon::parse($tenant_update->start_date)->format('Y-m-d') }}" 
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
-            </div>
+            </div>            
         
             <!-- Check-out Date -->
             <div class="mb-4">

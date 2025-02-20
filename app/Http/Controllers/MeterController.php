@@ -167,22 +167,26 @@ class MeterController extends Controller
     }
 
     public function bulkStore(Request $request)
-{
-    // Validate the input
-    $validatedData = $request->validate([
-        'meters' => 'required|array',
-        'meters.*.tenant_room_id' => 'required|exists:tenant_rooms,id',
-        'meters.*.kwh_number' => 'required|integer|min:0',
-        'meters.*.price_per_kwh' => 'required|numeric|min:0',
-        'meters.*.meter_month' => 'required|date',
-    ]);
+    {
+        // Validate the input
+        $validatedData = $request->validate([
+            'meters' => 'required|array',
+            'meters.*.tenant_room_id' => 'required|exists:tenant_rooms,id',
+            'meters.*.kwh_number' => 'required|integer|min:0',
+            'meters.*.price_per_kwh' => 'required|numeric|min:0',
+            'meters.*.meter_month' => 'required|date',
+        ]);
 
-    // Loop through each meter data and insert into the database
-    foreach ($validatedData['meters'] as $meterData) {
-        Meter::create($meterData);
+        // Loop through each meter data and insert into the database
+        foreach ($validatedData['meters'] as $meterData) {
+            Meter::create($meterData);
+        }
+
+        return redirect()->route('meter.index')->with('success', 'Meters successfully added in bulk.');
     }
 
-    return redirect()->route('meter.index')->with('success', 'Meters successfully added in bulk.');
-}
+    
+
+
 
 }

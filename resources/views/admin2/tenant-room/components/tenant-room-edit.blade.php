@@ -111,23 +111,25 @@
                 </select>
             </div>
             
-            <!-- Check-in Date -->
             <div class="mb-4">
                 <label for="start_date-{{ $tenantRoom->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Check-in Date
                 </label>
-                <input type="date" id="start_date-{{ $tenantRoom->id }}" name="start_date" value="{{ $tenantRoom->start_date }}" 
+                <input type="date" id="start_date-{{ $tenantRoom->id }}" name="start_date" 
+                    value="{{ $tenantRoom->start_date ? \Carbon\Carbon::parse($tenantRoom->start_date)->format('Y-m-d') : '' }}" 
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
             </div>
-
+            
             <!-- Check-out Date -->
             <div class="mb-4">
                 <label for="end_date-{{ $tenantRoom->id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Check-out Date
                 </label>
-                <input type="date" id="end_date-{{ $tenantRoom->id }}" name="end_date" value="{{ $tenantRoom->end_date }}" 
+                <input type="date" id="end_date-{{ $tenantRoom->id }}" name="end_date" 
+                    value="{{ $tenantRoom->end_date ? \Carbon\Carbon::parse($tenantRoom->end_date)->format('Y-m-d') : '' }}" 
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm sm:text-sm">
             </div>
+            
 
             <!-- Notes -->
             <div class="mb-4">

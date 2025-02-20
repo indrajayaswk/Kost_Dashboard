@@ -61,7 +61,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter', MeterController::class);
     Route::resource('tenant-room', TenantRoomController::class);
     Route::resource('complaint',ComplaintController::class);
-    Route::resource('statistics',StatisticsController::class);
+    // Route::resource('statistics',StatisticsController::class);
+    // Route::get('/statistics/pdf', [StatisticsController::class, 'generatePdf'])->name('statistics.pdf');
+    Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics.index');
+Route::get('statistics/pdf', [StatisticsController::class, 'generatePdf'])->name('statistics.pdf');
+    
 
     Route::patch('complaints/{complaint}/complete', [ComplaintController::class, 'complete'])->name('complaints.complete');
 
@@ -75,7 +79,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------
     Route::get('/meters/{tenant_room_id}', [MidtransController::class, 'fetchMeters'])->name('meters.fetch');
     Route::post('/meters/bulk-store', [MeterController::class, 'bulkStore'])->name('meter.bulk_store');
-
+    Route::get('/meters/previous-kwh', [MeterController::class, 'getPreviousKwh'])->name('meters.previous-kwh');
 });
 
 

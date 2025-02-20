@@ -62,10 +62,8 @@
                               <th scope="col" class="px-4 py-4">Room Type</th>
                               <th scope="col" class="px-4 py-4">Price</th>
                               <th scope="col" class="px-4 py-4">Room Status</th>
-                              <th scope="col" class="px-4 py-4">Images</th>
-                              <th scope="col" class="px-4 py-4 text-right">
-                                  <span class="sr-only">Actions</span>
-                              </th>
+                              <th scope="col" class="px-4 py-4 hidden sm:flex">Images</th>
+                              <th scope="col" class="px-4 py-4">Actions</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -80,19 +78,19 @@
                                 <td class="px-4 py-3">{{ $room->room_type }}</td>
                                 <td class="px-4 py-3">{{ $room->room_price }}</td>
                                 <td class="px-4 py-3">{{ $room->room_status }}</td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 hidden sm:flex ">
                                     @if (!empty($room->room_images))
-                                    @foreach ($room->room_images as $image)
-                                        <img src="{{ Storage::url($image) }}" class="w-16 h-16 rounded-lg" alt="Room Image">
-                                    @endforeach
-                                @else
-                                    <span class="text-gray-400">No Images</span>
-                                @endif
-
+                                        <div class="sm:flex space-x-2">
+                                            @foreach ($room->room_images as $image)
+                                                <img src="{{ Storage::url($image) }}" class="w-16 h-16 rounded-lg" alt="Room Image">
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400 hidden sm:inline">No Images</span>
+                                    @endif
+                                </td>                                
                                 
-
-                                </td>
-                                <td class="px-4 py-3 flex items-center justify-end">
+                                <td class="px-4 py-3 ">
                                     <!-- Action Button -->
                                     <button id="action-dropdown-room{{ $index }}" 
                                         data-dropdown-toggle="dropdown-room{{ $index }}" 
@@ -102,7 +100,7 @@
                                             <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
                                         </svg>
                                     </button>
-  
+                                
                                     <!-- Dropdown Menu -->
                                     <div id="dropdown-room{{ $index }}" 
                                         class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
@@ -134,15 +132,16 @@
                                               </button>
                                           </li>
                                       </ul>
-                                  </div>
-                              </td>
+                                    </div>
+                                </td>
+                                
                           </tr>
                           @endforeach
                       </tbody>
                   </table>
           
                   <!-- Pagination -->
-                  <div class="flex justify-between items-center p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700">
+                  {{-- <div class="flex justify-between items-center p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700">
                       <span class="text-sm text-gray-500 dark:text-gray-400">
                           Showing <span class="font-semibold text-gray-900 dark:text-white">{{ $rooms->firstItem() }}-{{ $rooms->lastItem() }}</span>
                           of <span class="font-semibold text-gray-900 dark:text-white">{{ $rooms->total() }}</span>
@@ -166,7 +165,10 @@
                               Next
                           </a>
                       </div>
-                  </div>
+                  </div> --}}
+                  <div class="mt-6 flex justify-center">
+                    {{ $rooms->links() }}
+                </div>
               </div>
           </div>
     </div>

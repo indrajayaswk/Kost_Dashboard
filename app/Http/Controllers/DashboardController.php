@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TenantRoom; 
+use App\Models\TenantRoom;
 use App\Models\Tenant;
 use App\Models\Room;
 use App\Models\Complaint;
@@ -22,10 +22,26 @@ class DashboardController extends Controller
         $pendingComplaintCount = $this->getPendingComplaintCount();
         $latestMonthYear = $this->getLatestMonthYear();
 
+        // Fetch recent complaints for Table Block 1
+        $recentComplaints = Complaint::with(['tenant', 'room'])
+            ->latest()
+            ->limit(5)
+            ->get();
 
-        // $recentPayments = Payment::with('tenant', 'room')->latest()->limit(5)->get();
+        // Fetch recent meter readings for Table Block 2
+        $recentMeters = Meter::with(['tenantRoom.primaryTenant', 'tenantRoom.room'])
+            ->latest()
+            ->limit(5)
+            ->get();
 
-        return view('admin2.Dashboard.index', compact('activeTenantCount', 'availableRoomCount', 'pendingComplaintCount', 'latestMonthYear'));
+        return view('admin2.Dashboard.index', compact(
+            'activeTenantCount',
+            'availableRoomCount',
+            'pendingComplaintCount',
+            'latestMonthYear',
+            'recentComplaints',
+            'recentMeters'
+        ));
     }
 
     /**
@@ -59,40 +75,5 @@ class DashboardController extends Controller
     {
         $latestMeterMonth = Meter::orderBy('meter_month', 'desc')->first(['meter_month']);
         return $latestMeterMonth ? Carbon::parse($latestMeterMonth->meter_month)->format('F Y') : null;
-    }
-    
-    
-
-
-    /**
-     * Show the form for adding a new dashboard entry.
-     */
-    public function create()
-    {
-        // return view('admin.dashboard.dashboard_add');
-    }
-
-    /**
-     * Display a specific dashboard entry.
-     */
-    public function show($id)
-    {
-        // return view('admin.dashboard.dashboard_read', compact('id'));
-    }
-
-    /**
-     * Show the form for editing a dashboard entry.
-     */
-    public function edit($id)
-    {
-        // return view('admin.dashboard.dashboard_update', compact('id'));
-    }
-
-    /**
-     * Handle the deletion of a dashboard entry.
-     */
-    public function destroy($id)
-    {
-        // return view('admin.dashboard.dashboard_delete', compact('id'));
     }
 }

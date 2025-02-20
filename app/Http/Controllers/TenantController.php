@@ -14,6 +14,21 @@ class TenantController extends Controller
     {
         $query = Tenant::query();
 
+        // General search across multiple columns
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                ->orWhere('phone', 'like', '%' . $search . '%')
+                ->orWhere('dp', 'like', '%' . $search . '%')
+                ->orWhere('note', 'like', '%' . $search . '%')
+                ->orWhere('start_date', 'like', '%' . $search . '%')
+                ->orWhere('end_date', 'like', '%' . $search . '%')
+                ->orWhere('created_at', 'like', '%' . $search . '%')
+                ->orWhere('updated_at', 'like', '%' . $search . '%');
+            });
+        }
+
         // Apply filters based on the request
         if ($request->has('name') && $request->name != '') {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -67,10 +82,9 @@ class TenantController extends Controller
             $query->whereNull('end_date');
         }
 
-        // // Paginate results (adjust as needed)
+        // Paginate results
         $tenants = $query->paginate(10);
-        // // Add a default tenant for the modal
-        // $defaultTenant = Tenant::first(); // Replace this logic if needed
+
         return view('admin2.tenant.index', compact('tenants'));
     }
 
