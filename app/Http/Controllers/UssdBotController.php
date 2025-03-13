@@ -449,14 +449,13 @@ public function getRegisteredInvoice($phone)
         // Fetch meter records
         if ($tenantRoom->meters->isNotEmpty()) {
             foreach ($tenantRoom->meters as $meter) {
-                $roomInvoice .= "- Billing Month: " . date('F Y', strtotime($meter->meter_month)) . "\n";
+                $roomInvoice .= "*--------" . date('F Y', strtotime($meter->meter_month)) ."--------*" . "\n";
                 $roomInvoice .= "- Total KWH: {$meter->total_kwh}\n";
                 $roomInvoice .= "- Price per KWH: Rp" . number_format($meter->price_per_kwh, 0, ',', '.') . "\n";
                 $roomInvoice .= "- Total Electricity Cost: Rp" . number_format($meter->total_price, 0, ',', '.') . "\n";
                 $roomInvoice .= "- Payment Status: " . ucfirst($meter->status) . "\n";
                 $roomInvoice .= "- Payment URL: " . ($meter->pay_proof ?? 'Not available') . "\n";
                 $roomInvoice .= "\n"; // Separate invoices by a line break
-                
             }
         } else {
             $roomInvoice .= "No meter data available in the past year.\n";
